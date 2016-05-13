@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.Extensions.Logging;
@@ -25,6 +26,11 @@ namespace Polemo.NetCore.Node.Hubs
         {
             _logger.LogDebug($"Client with ID: {Context?.ConnectionId} Disconnected");
             return base.OnDisconnected(stopCalled);
+        }
+
+        public Task<object> SignIn(string key)
+        {
+            throw new NotImplementedException();
         }
     }
 }
