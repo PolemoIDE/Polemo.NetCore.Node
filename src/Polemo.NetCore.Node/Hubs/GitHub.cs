@@ -61,7 +61,7 @@ namespace Polemo.NetCore.Node.Hubs
                 var proc = new Process();
                 proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
                 proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "--no-pager log -10 --numstat --format=--split--%n%H-::-%an-::-%ae-::-%at";
+                proc.StartInfo.Arguments = "--no-pager log -20 --numstat --format=--split--%n%H-::-%an-::-%ae-::-%at";
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardInput = true;
@@ -70,7 +70,7 @@ namespace Polemo.NetCore.Node.Hubs
                 proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
                 proc.Start();
                 var output = proc.StandardOutput.ReadToEnd();
-                return new { isSucceeded = true, msg = Parse(output) };
+                return new { isSucceeded = true, logs = Parse(output) };
             }
             catch (Exception ex)
             {
@@ -79,7 +79,7 @@ namespace Polemo.NetCore.Node.Hubs
             }
         }
         
-        public async Task<object> GetDiff(string projectName, string commit)
+        public async Task<object> GetGitDiff(string projectName, string commit)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace Polemo.NetCore.Node.Hubs
                 var proc = new Process();
                 proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
                 proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "--no-pager show --pretty=\"\" ";
+                proc.StartInfo.Arguments = "--no-pager diff --no-color";
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardInput = true;
@@ -123,9 +123,9 @@ namespace Polemo.NetCore.Node.Hubs
                 proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
                 proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
                 proc.Start();
+                while (!proc.WaitForExit(500));
                 var output = proc.StandardOutput.ReadToEnd();
                 var error = proc.StandardError.ReadToEnd();
-                while (!proc.WaitForExit(500));
                 if (proc.ExitCode != 0)
                     return new { isSucceeded = false, msg = error};
                 return new { isSucceeded = true, msg = output };
@@ -137,6 +137,220 @@ namespace Polemo.NetCore.Node.Hubs
             }
             
         }
+        public async Task<object> GetGitBranches(string projectName)
+        {
+            try
+            {
+                var proc = new Process();
+                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
+                proc.StartInfo.FileName = "git";
+                proc.StartInfo.Arguments = "branch -a";
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardInput = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
+                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                proc.Start();
+                while (!proc.WaitForExit(500));
+                var output = proc.StandardOutput.ReadToEnd();
+                output = output.Replace("\r\n", "\n");
+                var _branches = output.Split('\n'); 
+                var branches = new List<string>();
+                var nowBranch = "";
+                for (var i =0; i < _branches.Count() - 1; i++){
+                    if (_branches[i][0] == '*')
+                        nowBranch = _branches[i].Substring(1, _branches[i].Length - 1);
+                    branches.Add(_branches[i].Substring(1, _branches[i].Length - 1));
+                    
+                }
+                return new { isSucceeded = true, branches = branches , nowBranch = nowBranch};
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
+            
+        }
+        public async Task<object> CreateGitBranches(string projectName, string branchName, string baseBranchName = "")
+        {
+            try
+            {
+                var proc = new Process();
+                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
+                proc.StartInfo.FileName = "git";
+                proc.StartInfo.Arguments = "checkout -b" + branchName + baseBranchName;
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardInput = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
+                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                proc.Start();
+                while (!proc.WaitForExit(500));
+                var output = proc.StandardOutput.ReadToEnd();
+                var error = proc.StandardError.ReadToEnd();                
+                if (proc.ExitCode != 0)
+                    return new { isSucceeded = false, msg = error};
+                return new { isSucceeded = true, msg = output };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
+            
+        }
+        public async Task<object> SwitchGitBranches(string projectName, string branchName)
+        {
+            try
+            {
+                var proc = new Process();
+                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
+                proc.StartInfo.FileName = "git";
+                proc.StartInfo.Arguments = "checkout " + branchName;
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardInput = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
+                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                proc.Start();
+                while (!proc.WaitForExit(500));
+                var output = proc.StandardOutput.ReadToEnd();
+                var error = proc.StandardError.ReadToEnd();                
+                if (proc.ExitCode != 0)
+                    return new { isSucceeded = false, msg = error};
+                return new { isSucceeded = true, msg = output };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
+            
+        }
+        public async Task<object> DeleteGitBranches(string projectName, string branchName)
+        {
+            try
+            {
+                var proc = new Process();
+                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
+                proc.StartInfo.FileName = "git";
+                proc.StartInfo.Arguments = "branch -D " + branchName;
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardInput = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
+                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                proc.Start();
+                while (!proc.WaitForExit(500));
+                var output = proc.StandardOutput.ReadToEnd();
+                var error = proc.StandardError.ReadToEnd();                
+                if (proc.ExitCode != 0)
+                    return new { isSucceeded = false, msg = error};
+                return new { isSucceeded = true, msg = output };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
+            
+        }
+        
+        public async Task<object> CreateGitCommit(string projectName, string title, string description)
+        {
+            try
+            {
+                var proc = new Process();
+                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
+                proc.StartInfo.FileName = "git";
+                proc.StartInfo.Arguments = "commit -a -m \"" + title + "\" -m \""+ description +"\"";
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardInput = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
+                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                proc.Start();
+                while (!proc.WaitForExit(500));
+                var output = proc.StandardOutput.ReadToEnd();
+                var error = proc.StandardError.ReadToEnd();                
+                if (proc.ExitCode != 0)
+                    return new { isSucceeded = false, msg = output + error};
+                return new { isSucceeded = true, msg = output };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
+            
+        }
+        
+        public async Task<object> CreateGitPush(string projectName, string repository, string refspec)
+        {
+            try
+            {
+                var proc = new Process();
+                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
+                proc.StartInfo.FileName = "git";
+                proc.StartInfo.Arguments = "push" + " " + repository +  " " + refspec ;
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardInput = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
+                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                proc.Start();
+                while (!proc.WaitForExit(500));
+                var output = proc.StandardOutput.ReadToEnd();
+                var error = proc.StandardError.ReadToEnd();                
+                if (proc.ExitCode != 0)
+                    return new { isSucceeded = false, msg = output + error};
+                return new { isSucceeded = true, msg = output };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
+            
+        }
+        public async Task<object> CreateGitPull(string projectName, string repository, string refspec)
+        {
+            try
+            {
+                var proc = new Process();
+                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
+                proc.StartInfo.FileName = "git";
+                proc.StartInfo.Arguments = "pull" + " " + repository +  " " + refspec ;
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardInput = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
+                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                proc.Start();
+                while (!proc.WaitForExit(500));
+                var output = proc.StandardOutput.ReadToEnd();
+                var error = proc.StandardError.ReadToEnd();                
+                if (proc.ExitCode != 0)
+                    return new { isSucceeded = false, msg = output + error};
+                return new { isSucceeded = true, msg = output };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
+            
+        }
+        
+
 
     }
 }
