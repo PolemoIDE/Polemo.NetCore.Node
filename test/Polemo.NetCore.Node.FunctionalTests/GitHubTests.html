@@ -70,6 +70,18 @@
             });
 
             nodeHub
+            .invoke('CreateGitCommit', 'Polemo.NetCore.Node', 'title', 'description')
+            .done(function (content) {
+                $("body").append("<div><h3>CreateGitCommit Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<br\> <strong>msg:</strong>" 
+                   + "<pre>"+content.msg+"</pre>"
+                   + "</div>");
+            });
+
+
+            nodeHub
             .invoke('GetGitLogs', 'Polemo.NetCore.Node')
             .done(function (content) {
                 console.log(content)
