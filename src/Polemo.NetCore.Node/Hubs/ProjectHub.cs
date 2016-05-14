@@ -154,9 +154,27 @@ namespace Polemo.NetCore.Node.Hubs
             }
         }
 
-        public Task<object> RenameFile(string projectName, string fileDirectory, string oldFileName, string newFileName)
+        public object RenameFile(string projectName, string fileDirectory, string oldFileName, string newFileName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string oldFilepath = Path.Combine(Config.RootPath, projectName, fileDirectory, oldFileName);
+                string newFilePath = Path.Combine(Config.RootPath, projectName, fileDirectory, newFileName);
+                var oldFile = new FileInfo(oldFilepath);
+                if(!oldFile.Exists)
+                    return new { isSucceeded = false, msg = "源文件不存在" };
+                var newFile = new FileInfo(newFilePath);
+                if (newFile.Exists)
+                    return new {isSucceeded = false, msg = "目标文件已存在"};
+                File.Copy(oldFilepath, newFilePath, false);
+                oldFile.Delete();
+                return new { isSucceeded = true, msg = "重命名成功" };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
         }
 
         public Task<object> RenameFolder(string projectName, string baseDirectory, string oldDirectoryName, string newDirectoryName)
