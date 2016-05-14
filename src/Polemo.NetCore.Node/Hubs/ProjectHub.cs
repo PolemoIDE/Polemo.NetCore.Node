@@ -5,15 +5,31 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Polemo.NetCore.Node.Common;
 
 namespace Polemo.NetCore.Node.Hubs
 {
     public partial class PolemoHub
     {
-        public Task<object> GetCommands(string projectName)
+        public object GetCommands(string projectName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string path = Path.Combine(Config.RootPath, projectName);
+                if (!Directory.Exists(path))
+                    return new {isSucceeded = false, msg = $"项目\"{projectName}\"不存在"};
+
+                var commands = Dotnet.GetCommands(path);
+                if (commands == null)
+                    return new {isSucceeded = false, msg = "没有找到commands"};
+                return JsonConvert.SerializeObject(commands);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
         }
 
         public Task<object> RunCommand(string projectName, string cmd, string projectPath)
@@ -69,7 +85,7 @@ namespace Polemo.NetCore.Node.Hubs
                 if (file.Exists)
                     isNew = false;
                 
-                if (file.Name.Equals("project.json", StringComparison.OrdinalIgnoreCase))
+                if (file.Name.Equals("project.json"))
                     hasRestore = true;
 
                 using (FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))

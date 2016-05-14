@@ -90,6 +90,15 @@
                      + $('<div/>').text(content.msg).html() 
                      + "</div>");
                 });
+                
+            nodeHub
+                .invoke('GetCommands', 'Polemo.NetCore.Node')
+                .done(function (content) {
+                    $("body").append("<div><h3>GetCommands Test: </h3>"
+                     + "<strong>commands:</strong> " 
+                     + $('<div/>').text(content).html() 
+                     + "</div>");
+                });
         });
     </script>
 </body>
