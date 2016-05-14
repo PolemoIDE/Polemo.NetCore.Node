@@ -164,8 +164,7 @@ namespace Polemo.NetCore.Node.Hubs
                     return new { isSucceeded = false, msg = "源文件不存在" };
                 if (File.Exists(newFilePath))
                     return new {isSucceeded = false, msg = "目标文件已存在"};
-                File.Copy(oldFilePath, newFilePath, false);
-                File.Delete(oldFilePath);
+                File.Move(oldFilePath, newFilePath);
                 return new { isSucceeded = true, msg = "重命名成功" };
             }
             catch (Exception ex)
