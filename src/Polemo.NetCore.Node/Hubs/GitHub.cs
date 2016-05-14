@@ -1,40 +1,87 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Polemo.NetCore.Node.Models;
 
 namespace Polemo.NetCore.Node.Hubs
 {
     public partial class PolemoHub
-    {
-        public Task<object> SwitchBranch(string projectName, string targetBranch)
+    {   
+
+        private static List<Commit> Parse(string src)
         {
-            throw new NotImplementedException();
+
+            var ret = new List<Commit>();
+            src = src.Replace("\r\n", "\n");
+            var logs = src.Split(new string[] { "--split--" }, StringSplitOptions.None);
+            Console.WriteLine(src);
+            Console.WriteLine(logs.Count());
+
+            for (var j =1; j < logs.Count(); j++)
+            {
+                var commit = new Commit{
+                    Additions = 0,
+                    Deletions = 0,
+                    FilesChange = 0,
+                 };
+                
+                var tmp = logs[j].Split('\n');
+                
+                for (var i =0; i < tmp.Count(); i++){
+                    
+                    if (string.IsNullOrWhiteSpace(tmp[i]))
+                        continue;
+                    var splited = tmp[i].Split(new string[] { "-::-" }, StringSplitOptions.None);
+                    if (splited.Count() == 4)
+                    {
+                        commit.Hash = splited[0];
+                        commit.Author = splited[1];
+                        commit.Email = splited[2];
+                        commit.Datetime = Convert.ToInt64(splited[3]);
+                    }
+                    else
+                    {
+                        splited = tmp[i].Split('\t');
+                        commit.Additions += Convert.ToInt64(splited[0] == "-" ? "0" : splited[0]);
+                        commit.Deletions += Convert.ToInt64(splited[1] == "-" ? "0" : splited[1]);
+                        commit.FilesChange += 1;
+                    }
+                }
+                ret.Add(commit);
+            }
+             
+            
+            return ret;
+        }
+         
+        public async Task<object> GetGitLogs(string projectName)
+        {
+            try
+            {
+                var proc = new Process();
+                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
+                proc.StartInfo.FileName = "git";
+                proc.StartInfo.Arguments = "--no-pager log -10 --numstat --format=--split--%n%H-::-%an-::-%ae-::-%at";
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardInput = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
+                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                proc.Start();
+                var output = proc.StandardOutput.ReadToEnd();
+                return new { isSucceeded = true, msg = Parse(output) };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
         }
 
-        public Task<object> RemoveBranch(string projectName, string targetBranch)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<object> GetGitLogs(string projectName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<object> GetGitDiff(string projectName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<object> GitCommit(string projectName, string title, string description)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<object> GitPull(string projectName)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

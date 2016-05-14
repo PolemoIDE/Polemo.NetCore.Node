@@ -9,87 +9,109 @@
         var nodeHub = nodeConnection.createHubProxy('PolemoHub');
         nodeConnection.start().done(function () {
             nodeHub
-                .invoke('ReadFile', 'Polemo.NetCore.Node', 'NuGet.config')
-                .done(function (content) {
-                    $("body").append("<div><h3>ReadFile Test: </h3>"
-                     + "<strong>isSucceeded:</strong> " 
-                     + content.isSucceeded 
-                     + "<br\> <strong>msg:</strong> " 
-                     + $('<div/>').text(content.msg).html() 
-                     + "</div>");
-                });
-                
+            .invoke('ReadFile', 'Polemo.NetCore.Node', 'NuGet.config')
+            .done(function (content) {
+                $("body").append("<div><h3>ReadFile Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<br\> <strong>msg:</strong> " 
+                   + $('<div/>').text(content.msg).html() 
+                   + "</div>");
+            });
+
             nodeHub
-                .invoke('WriteFile', 'Polemo.NetCore.Node', 'Test.cs', 'test write ' + +new Date)
-                .done(function (content) {
-                    $("body").append("<div><h3>WriteFile Test: </h3>"
-                     + "<strong>isSucceeded:</strong> " 
-                     + content.isSucceeded 
-                     + "<br\> <strong>isNew:</strong> " 
-                     + content.isNew 
-                     + "<br\> <strong>hasRestore:</strong> " 
-                     + content.hasRestore 
-                     + "<br\> <strong>isRestored:</strong> " 
-                     + content.isRestored 
-                     + "<br\> <strong>msg:</strong> " 
-                     + $('<div/>').text(content.msg).html() 
-                     + "</div>");
-                });
-                
+            .invoke('WriteFile', 'Polemo.NetCore.Node', 'Test.cs', 'test write ' + +new Date)
+            .done(function (content) {
+                $("body").append("<div><h3>WriteFile Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<br\> <strong>isNew:</strong> " 
+                   + content.isNew 
+                   + "<br\> <strong>hasRestore:</strong> " 
+                   + content.hasRestore 
+                   + "<br\> <strong>isRestored:</strong> " 
+                   + content.isRestored 
+                   + "<br\> <strong>msg:</strong> " 
+                   + $('<div/>').text(content.msg).html() 
+                   + "</div>");
+            });
+
             nodeHub
-                .invoke('RemoveFile', 'Polemo.NetCore.Node', 'remove.txt')
-                .done(function (content) {
-                    $("body").append("<div><h3>RemoveFile Test: </h3>"
-                     + "<strong>isSucceeded:</strong> " 
-                     + content.isSucceeded 
-                     + "<br\> <strong>msg:</strong> " 
-                     + $('<div/>').text(content.msg).html() 
-                     + "</div>");
-                });
-                
+            .invoke('RemoveFile', 'Polemo.NetCore.Node', 'remove.txt')
+            .done(function (content) {
+                $("body").append("<div><h3>RemoveFile Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<br\> <strong>msg:</strong> " 
+                   + $('<div/>').text(content.msg).html() 
+                   + "</div>");
+            });
+
             nodeHub
-                .invoke('CreateFolder', 'Polemo.NetCore.Node', '', 'txt')
-                .done(function (content) {
-                    $("body").append("<div><h3>CreateFolder Test: </h3>"
-                     + "<strong>isSucceeded:</strong> " 
-                     + content.isSucceeded 
-                     + "<br\> <strong>msg:</strong> " 
-                     + $('<div/>').text(content.msg).html() 
-                     + "</div>");
-                });
-                
+            .invoke('CreateFolder', 'Polemo.NetCore.Node', '', 'txt')
+            .done(function (content) {
+                $("body").append("<div><h3>CreateFolder Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<br\> <strong>msg:</strong> " 
+                   + $('<div/>').text(content.msg).html() 
+                   + "</div>");
+            });
+
             nodeHub
-                .invoke('RemoveFolder', 'Polemo.NetCore.Node', 'txt')
-                .done(function (content) {
-                    $("body").append("<div><h3>RemoveFolder Test: </h3>"
-                     + "<strong>isSucceeded:</strong> " 
-                     + content.isSucceeded 
-                     + "<br\> <strong>msg:</strong> " 
-                     + $('<div/>').text(content.msg).html() 
-                     + "</div>");
-                });
-                
+            .invoke('RemoveFolder', 'Polemo.NetCore.Node', 'txt')
+            .done(function (content) {
+                $("body").append("<div><h3>RemoveFolder Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<br\> <strong>msg:</strong> " 
+                   + $('<div/>').text(content.msg).html() 
+                   + "</div>");
+            });
+
             nodeHub
-                .invoke('RenameFile', 'Polemo.NetCore.Node', '', 'a.txt', 'b.txt')
-                .done(function (content) {
-                    $("body").append("<div><h3>RenameFile Test: </h3>"
-                     + "<strong>isSucceeded:</strong> " 
-                     + content.isSucceeded 
-                     + "<br\> <strong>msg:</strong> " 
-                     + $('<div/>').text(content.msg).html() 
-                     + "</div>");
-                });
-                
+            .invoke('RenameFile', 'Polemo.NetCore.Node', '', 'a.txt', 'b.txt')
+            .done(function (content) {
+                $("body").append("<div><h3>RenameFile Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<br\> <strong>msg:</strong> " 
+                   + $('<div/>').text(content.msg).html() 
+                   + "</div>");
+            });
+
             nodeHub
-                .invoke('RenameFolder', 'Polemo.NetCore.Node', '', 'a', 'b')
-                .done(function (content) {
-                    $("body").append("<div><h3>RenameFolder Test: </h3>"
-                     + "<strong>isSucceeded:</strong> " 
-                     + content.isSucceeded 
-                     + "<br\> <strong>msg:</strong> " 
-                     + $('<div/>').text(content.msg).html() 
-                     + "</div>");
+            .invoke('RenameFolder', 'Polemo.NetCore.Node', '', 'a', 'b')
+            .done(function (content) {
+                $("body").append("<div><h3>RenameFolder Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<br\> <strong>msg:</strong> " 
+                   + $('<div/>').text(content.msg).html() 
+                   + "</div>");
+            });
+            nodeHub
+            .invoke('GetGitLogs', 'Polemo.NetCore.Node')
+            .done(function (content) {
+                console.log(content)
+                $("body").append("<div><h3>GetGitLogs Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<br\> <strong>Logs:</strong> " 
+                   + "<div id='gitlogs'></div>"
+                   + "</div>");
+                $.each(content.msg, function () {
+                    $("#gitlogs").append(
+                        this.Hash 
+                        + "<li> Author: " + this.Author + "</li>"
+                        + "<li> Email: " + this.Email + "</li>"
+                        + "<li> Time: " + this.Time + "</li>"
+                        + "<li> FilesChange: " + this.FilesChange + "</li>"
+                        + "<li> Additions: " + this.Additions + "</li>"
+                        + "<li> Deletions: " + this.Deletions + "</li>"
+                        + "</li>")
                 });
+            })
         });
     </script>
 </body>
