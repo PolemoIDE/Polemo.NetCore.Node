@@ -29,5 +29,28 @@ namespace Polemo.NetCore.Node.Models
                 return path;
             }
         }
+
+        public string OmniSharpPath
+        {
+            get
+            {
+                var path = _configuration["OmniSharpPath"];
+                if (string.IsNullOrEmpty(path))
+                {
+                    var appEnv = _serviceProvider.GetRequiredService<IApplicationEnvironment>();
+                    return appEnv.ApplicationBasePath;
+                }
+                return path;
+            }
+        }
+
+        public string OmniSharpExe
+        {
+            get
+            {
+                var path = _configuration["OmniSharpExe"];
+                return string.IsNullOrEmpty(path) ? "OmniSharp.exe" : path;
+            }
+        }
     }
 }

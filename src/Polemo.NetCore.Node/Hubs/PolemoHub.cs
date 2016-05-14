@@ -11,11 +11,13 @@ namespace Polemo.NetCore.Node.Hubs
     {
         private readonly ILogger _logger;
         public static Config Config;
+        public static OmniSharp OmniSharp;
 
-        public PolemoHub(IServiceProvider serviceProvider, IConfiguration configuration, ILogger<PolemoHub> logger)
+        public PolemoHub(IServiceProvider serviceProvider, IConfiguration configuration, ILoggerFactory loggerFactory)
         {
-            _logger = logger;
+            _logger = loggerFactory.CreateLogger<PolemoHub>();
             Config = new Config(serviceProvider, configuration);
+            OmniSharp = new OmniSharp(serviceProvider, configuration, loggerFactory);
         }
 
         public override Task OnConnected()

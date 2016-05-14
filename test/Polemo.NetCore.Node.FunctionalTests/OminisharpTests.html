@@ -1,0 +1,35 @@
+<html>
+<head>
+    <script src="./jquery-1.12.3.min.js"></script>
+    <script src="./jquery.signalr-2.0.3.js"></script>
+</head>
+<body>
+    <script>
+        var nodeConnection = $.hubConnection('http://localhost:50556');
+        var nodeHub = nodeConnection.createHubProxy('PolemoHub');
+        nodeConnection.start().done(function () {
+            nodeHub
+                .invoke('StartOminisharp', 'Polemo.NetCore.Node\\newtest')
+                .done(function (content) {
+                    $("body").append("<div><h3>StartOminisharp Test: </h3>"
+                    + "<strong>isSucceeded:</strong> " 
+                    + content.isSucceeded 
+                    + "<br\> <strong>msg:</strong> " 
+                    + $('<div/>').text(content.msg).html() 
+                    + "</div>");
+                });
+                
+            nodeHub
+                .invoke('AutoComplete', 'Polemo.NetCore.Node\\newtest', 'test.cs', 0, 1, 'us')
+                .done(function (content) {
+                    $("body").append("<div><h3>AutoComplete Test: </h3>"
+                    + "<strong>isSucceeded:</strong> " 
+                    + content.isSucceeded 
+                    + "<br\> <strong>msg:</strong> " 
+                    + $('<div/>').text(content.msg).html() 
+                    + "</div>");
+                });
+        });
+    </script>
+</body>
+</html>

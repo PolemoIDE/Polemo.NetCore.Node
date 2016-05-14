@@ -26,7 +26,9 @@
     "dnx451": { },
     "dnxcore50": {
       "dependencies": {
-        "System.Diagnostics.Process": "4.1.0-beta-23516"
+        "System.Diagnostics.Process": "4.1.0-beta-*",
+        "System.Net.NetworkInformation": "4.1.0-beta-*",
+        "System.Net.Requests": "4.0.11-beta-*"
       }
     }
   },
