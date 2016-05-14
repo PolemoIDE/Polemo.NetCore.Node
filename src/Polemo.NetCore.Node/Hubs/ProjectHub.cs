@@ -42,25 +42,45 @@ namespace Polemo.NetCore.Node.Hubs
                         using (StreamReader reader = new StreamReader(fileStream))
                         {
                             var text = await reader.ReadToEndAsync();
-                            return new {IsSucceeded = true, msg = text};
+                            return new {isSucceeded = true, msg = text};
                         }
                     }
                 }
                 else
                 {
-                    return new {IsSucceeded = false, msg = "文件不存在"};
+                    return new {isSucceeded = false, msg = "文件不存在"};
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.StackTrace);
-                return new {IsSucceeded = false, msg = ex.Message};
+                return new {isSucceeded = false, msg = ex.Message};
             }
         }
 
-        public Task<object> WriteFile(string projectName, string fileRelativePath, string fileContent)
+        public async Task<object> WriteFile(string projectName, string fileRelativePath, string fileContent)
         {
-            throw new NotImplementedException();
+            try
+            {
+                bool isNew = true;
+                string path = Path.Combine(Environment.CurrentDirectory, projectName, fileRelativePath);
+                if (File.Exists(path))
+                    isNew = false;
+
+                using (FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
+                {
+                    using (StreamWriter writer = new StreamWriter(fileStream))
+                    {
+                        await writer.WriteAsync(fileContent);
+                        return new { isSucceeded = true, isNew = isNew };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
         }
 
         public Task<object> RemoveFile(string projectName, string fileRelativePath)
