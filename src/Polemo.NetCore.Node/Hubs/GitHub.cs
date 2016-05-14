@@ -61,7 +61,7 @@ namespace Polemo.NetCore.Node.Hubs
                 var proc = new Process();
                 proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
                 proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "--no-pager log -10 --numstat --format=--split--%n%H-::-%an-::-%ae-::-%at";
+                proc.StartInfo.Arguments = "--no-pager log -20 --numstat --format=--split--%n%H-::-%an-::-%ae-::-%at";
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardInput = true;
@@ -70,7 +70,7 @@ namespace Polemo.NetCore.Node.Hubs
                 proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
                 proc.Start();
                 var output = proc.StandardOutput.ReadToEnd();
-                return new { isSucceeded = true, msg = Parse(output) };
+                return new { isSucceeded = true, logs = Parse(output) };
             }
             catch (Exception ex)
             {
@@ -137,7 +137,7 @@ namespace Polemo.NetCore.Node.Hubs
             }
             
         }
-        public async Task<object> GetGitBranchs(string projectName)
+        public async Task<object> GetGitbranches(string projectName)
         {
             try
             {
@@ -154,20 +154,20 @@ namespace Polemo.NetCore.Node.Hubs
                 proc.Start();
                 var output = proc.StandardOutput.ReadToEnd();
                 output = output.Replace("\r\n", "\n");
-                var _branchs = output.Split('\n'); 
-                var branchs = new List<string>();
+                var _branches = output.Split('\n'); 
+                var branches = new List<string>();
                 var nowBranch = "";
-                for (var i =0; i < _branchs.Count() - 1; i++){
-                    if (_branchs[i][0] == '*')
-                        nowBranch = _branchs[i].Substring(1, _branchs[i].Length - 1);
-                    branchs.Add(_branchs[i].Substring(1, _branchs[i].Length - 1));
+                for (var i =0; i < _branches.Count() - 1; i++){
+                    if (_branches[i][0] == '*')
+                        nowBranch = _branches[i].Substring(1, _branches[i].Length - 1);
+                    branches.Add(_branches[i].Substring(1, _branches[i].Length - 1));
                     
                 }
-                // var branchs = output.Split("\n");
+                // var branches = output.Split("\n");
                 // while (!proc.WaitForExit(500));
 
 
-                return new { isSucceeded = true, branchs = branchs , nowBranch = nowBranch};
+                return new { isSucceeded = true, branches = branches , nowBranch = nowBranch};
             }
             catch (Exception ex)
             {
@@ -176,7 +176,7 @@ namespace Polemo.NetCore.Node.Hubs
             }
             
         }
-        public async Task<object> CreateGitBranchs(string projectName, string branchName, string baseBranchName = "")
+        public async Task<object> CreateGitBranches(string projectName, string branchName, string baseBranchName = "")
         {
             try
             {
@@ -205,7 +205,7 @@ namespace Polemo.NetCore.Node.Hubs
             }
             
         }
-        public async Task<object> SwitchGitBranchs(string projectName, string branchName)
+        public async Task<object> SwitchGitBranches(string projectName, string branchName)
         {
             try
             {
@@ -234,7 +234,7 @@ namespace Polemo.NetCore.Node.Hubs
             }
             
         }
-        public async Task<object> DeleteGitBranchs(string projectName, string branchName)
+        public async Task<object> DeleteGitBranches(string projectName, string branchName)
         {
             try
             {
