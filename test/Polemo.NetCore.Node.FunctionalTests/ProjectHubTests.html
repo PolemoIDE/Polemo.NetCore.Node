@@ -7,11 +7,13 @@
     <script>
         var nodeConnection = $.hubConnection('http://localhost:50556');
         var nodeHub = nodeConnection.createHubProxy('PolemoHub');
-        nodeHub.server
-            .invoke('readFile', 'Polemo.NetCore.Node', 'NuGet.config')
-            .done(function (content) {
-                alert(content);
-            });
+        nodeConnection.start().done(function () {
+            nodeHub
+                .invoke('readFile', 'Polemo.NetCore.Node', 'NuGet.config')
+                .done(function (content) {
+                    alert(content.msg);
+                }); 
+        });
     </script>
 </body>
 </html>
