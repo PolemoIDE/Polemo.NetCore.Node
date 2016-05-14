@@ -1,0 +1,17 @@
+<html>
+<head>
+    <script src="./jquery-1.12.3.min.js"></script>
+    <script src="./jquery.signalr-2.0.3.js"></script>
+</head>
+<body>
+    <script>
+        var nodeConnection = $.hubConnection('http://localhost:50556');
+        var nodeHub = nodeConnection.createHubProxy('PolemoHub');
+        nodeHub.server
+            .invoke('readFile', 'Polemo.NetCore.Node', 'NuGet.config')
+            .done(function (content) {
+                alert(content);
+            });
+    </script>
+</body>
+</html>
