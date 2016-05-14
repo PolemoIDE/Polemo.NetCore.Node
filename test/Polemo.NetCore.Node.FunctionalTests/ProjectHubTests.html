@@ -90,6 +90,27 @@
                    + $('<div/>').text(content.msg).html() 
                    + "</div>");
             });
+
+            nodeHub
+            .invoke('GetDiff', 'Polemo.NetCore.Node', '1d87e759d70ac75db0757792f18220a78540644b')
+            .done(function (content) {
+                $("body").append("<div><h3>GetDiff Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<br\> <strong>msg:</strong> " 
+                   + "<pre>"+content.msg+"</pre>"
+                   + "</div>");
+            });
+            nodeHub
+            .invoke('GetUncommitDiff', 'Polemo.NetCore.Node')
+            .done(function (content) {
+                $("body").append("<div><h3>GetUncommitDiff Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<br\> <strong>msg:</strong> " 
+                   + "<pre>"+content.msg+"</pre>"
+                   + "</div>");
+            });
             nodeHub
             .invoke('GetGitLogs', 'Polemo.NetCore.Node')
             .done(function (content) {
