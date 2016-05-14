@@ -22,7 +22,7 @@
             nodeHub
                 .invoke('WriteFile', 'Polemo.NetCore.Node', 'Test.cs', 'test write ' + +new Date)
                 .done(function (content) {
-                    $("body").append("<div><h3>ReadFile Test: </h3>"
+                    $("body").append("<div><h3>WriteFile Test: </h3>"
                      + "<strong>isSucceeded:</strong> " 
                      + content.isSucceeded 
                      + "<br\> <strong>isNew:</strong> " 
@@ -39,7 +39,18 @@
             nodeHub
                 .invoke('RemoveFile', 'Polemo.NetCore.Node', 'remove.txt')
                 .done(function (content) {
-                    $("body").append("<div><h3>ReadFile Test: </h3>"
+                    $("body").append("<div><h3>RemoveFile Test: </h3>"
+                     + "<strong>isSucceeded:</strong> " 
+                     + content.isSucceeded 
+                     + "<br\> <strong>msg:</strong> " 
+                     + $('<div/>').text(content.msg).html() 
+                     + "</div>");
+                });
+                
+            nodeHub
+                .invoke('CreateFolder', 'Polemo.NetCore.Node', '', 'txt')
+                .done(function (content) {
+                    $("body").append("<div><h3>CreateFolder Test: </h3>"
                      + "<strong>isSucceeded:</strong> " 
                      + content.isSucceeded 
                      + "<br\> <strong>msg:</strong> " 

@@ -114,9 +114,24 @@ namespace Polemo.NetCore.Node.Hubs
             }
         }
 
-        public Task<object> CreateFolder(string projectName, string baseDirectory, string directoryName)
+        public object CreateFolder(string projectName, string baseDirectory, string directoryName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string path = Path.Combine(Config.RootPath, projectName, baseDirectory, directoryName);
+                var directory = new DirectoryInfo(path);
+                if (!directory.Exists)
+                {
+                    directory.Create();
+                    return new { isSucceeded = true, msg = "创建成功" };
+                }
+                return new { isSucceeded = true, msg = "文件夹已存在" };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
         }
 
         public Task<object> RemoveFolder(string projectName, string directoryRelativePath)
