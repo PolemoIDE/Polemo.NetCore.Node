@@ -1,0 +1,35 @@
+<html>
+<head>
+    <script src="./jquery-1.12.3.min.js"></script>
+    <script src="./jquery.signalr-2.0.3.js"></script>
+</head>
+<body>
+    <script>
+        var nodeConnection = $.hubConnection('http://localhost:50556');
+        var nodeHub = nodeConnection.createHubProxy('PolemoHub');
+        nodeConnection.start().done(function () {
+            nodeHub
+            .invoke('GetGitLogs', 'Polemo.NetCore.Node')
+            .done(function (content) {
+                console.log(content)
+                $("body").append("<div><h3>GetGitLogs Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<br\> <strong>Logs:</strong> " 
+                   + "<div id='gitlogs'></div>"
+                   + "</div>");
+                $.each(content.msg, function () {
+                    $("#gitlogs").append(
+                        this.Hash 
+                        + "<li> Author: " + this.Author + "</li>"
+                        + "<li> Email: " + this.Email + "</li>"
+                        + "<li> Time: " + this.Time + "</li>"
+                        + "<li> FilesChange: " + this.FilesChange + "</li>"
+                        + "<li> Additions: " + this.Additions + "</li>"
+                        + "<li> Deletions: " + this.Deletions + "</li>"
+                        + "</li>")
+                });
+        });
+    </script>
+</body>
+</html>
