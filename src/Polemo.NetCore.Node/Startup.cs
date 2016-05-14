@@ -29,7 +29,6 @@ namespace Polemo.NetCore.Node
         {
             loggerFactory.AddConsole(LogLevel.Debug);
             app.UseCors("Polemo");
-            app.UseWebSockets();
             app.UseSignalR();
         }
 
