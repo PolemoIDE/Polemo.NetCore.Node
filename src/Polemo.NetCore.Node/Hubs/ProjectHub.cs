@@ -83,7 +83,7 @@ namespace Polemo.NetCore.Node.Hubs
                             string projectPath = Path.Combine(Config.RootPath, projectName);
                             isRestored = Dotnet.Restore(projectPath);
                         }
-                        return new { isSucceeded = true, isNew = isNew, isRestored = isRestored};
+                        return new { isSucceeded = true, isNew = isNew, hasRestore = hasRestore, isRestored = isRestored};
                     }
                 }
             }

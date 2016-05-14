@@ -11,7 +11,29 @@
             nodeHub
                 .invoke('ReadFile', 'Polemo.NetCore.Node', 'NuGet.config')
                 .done(function (content) {
-                    $("body").append("<div><h3>ReadFile Test: </h3><strong>isSucceeded:</strong> " + content.isSucceeded + "<br\> <strong>msg:</strong> " + $('<div/>').text(content.msg).html() + "</div>");
+                    $("body").append("<div><h3>ReadFile Test: </h3>"
+                     + "<strong>isSucceeded:</strong> " 
+                     + content.isSucceeded 
+                     + "<br\> <strong>msg:</strong> " 
+                     + $('<div/>').text(content.msg).html() 
+                     + "</div>");
+                });
+                
+            nodeHub
+                .invoke('WriteFile', 'Polemo.NetCore.Node', 'Test.cs', 'test write ' + +new Date)
+                .done(function (content) {
+                    $("body").append("<div><h3>ReadFile Test: </h3>"
+                     + "<strong>isSucceeded:</strong> " 
+                     + content.isSucceeded 
+                     + "<br\> <strong>isNew:</strong> " 
+                     + content.isNew 
+                     + "<br\> <strong>hasRestore:</strong> " 
+                     + content.hasRestore 
+                     + "<br\> <strong>isRestored:</strong> " 
+                     + content.isRestored 
+                     + "<br\> <strong>msg:</strong> " 
+                     + $('<div/>').text(content.msg).html() 
+                     + "</div>");
                 });
         });
     </script>
