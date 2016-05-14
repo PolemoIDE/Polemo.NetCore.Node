@@ -79,7 +79,7 @@ namespace Polemo.NetCore.Node.Hubs
             }
         }
         
-        public async Task<object> GetDiff(string projectName, string commit)
+        public async Task<object> GetGitDiff(string projectName, string commit)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace Polemo.NetCore.Node.Hubs
                 var proc = new Process();
                 proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
                 proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "--no-pager show --pretty=\"\" ";
+                proc.StartInfo.Arguments = "--no-pager diff --no-color";
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardInput = true;
@@ -123,9 +123,9 @@ namespace Polemo.NetCore.Node.Hubs
                 proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
                 proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
                 proc.Start();
+                while (!proc.WaitForExit(500));
                 var output = proc.StandardOutput.ReadToEnd();
                 var error = proc.StandardError.ReadToEnd();
-                while (!proc.WaitForExit(500));
                 if (proc.ExitCode != 0)
                     return new { isSucceeded = false, msg = error};
                 return new { isSucceeded = true, msg = output };
@@ -137,6 +137,46 @@ namespace Polemo.NetCore.Node.Hubs
             }
             
         }
+        public async Task<object> GetGitBranchs(string projectName)
+        {
+            try
+            {
+                var proc = new Process();
+                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
+                proc.StartInfo.FileName = "git";
+                proc.StartInfo.Arguments = "branch --no-color";
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardInput = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
+                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                proc.Start();
+                var output = proc.StandardOutput.ReadToEnd();
+                output = output.Replace("\r\n", "\n");
+                var _branchs = output.Split('\n'); 
+                var branchs = new List<string>();
+                var nowBranch = "";
+                for (var i =0; i < _branchs.Count() - 1; i++){
+                    if (_branchs[i][0] == '*')
+                        nowBranch = _branchs[i].Substring(1, _branchs[i].Length - 1);
+                    branchs.Add(_branchs[i].Substring(1, _branchs[i].Length - 1));
+                    
+                }
+                // var branchs = output.Split("\n");
+                // while (!proc.WaitForExit(500));
+
+
+                return new { isSucceeded = true, branchs = branchs , nowBranch = nowBranch};
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
+            
+        }
+
 
     }
 }

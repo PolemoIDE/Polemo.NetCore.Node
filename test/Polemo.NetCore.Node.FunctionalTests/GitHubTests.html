@@ -1,3 +1,4 @@
+
 <html>
 <head>
     <script src="./jquery-1.12.3.min.js"></script>
@@ -8,6 +9,24 @@
         var nodeConnection = $.hubConnection('http://localhost:50556');
         var nodeHub = nodeConnection.createHubProxy('PolemoHub');
         nodeConnection.start().done(function () {
+            nodeHub
+            .invoke('GetGitBranchs', 'Polemo.NetCore.Node')
+            .done(function (content) {
+                console.log(content)
+                $("body").append("<div><h3>GetBranchs Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<div id='getbranchs'> </div>"
+                   + "<strong>nowBranch:"+ content.nowBranch+"</strong>"
+                   + "</div>");
+                $.each(content.branchs, function () {
+                    console.log(this)
+                    $("#getbranchs").append(
+                          "<li>"  + this + "</li>"
+                        )
+                })
+            });
+
             nodeHub
             .invoke('GetGitLogs', 'Polemo.NetCore.Node')
             .done(function (content) {
@@ -29,6 +48,31 @@
                         + "<li> Deletions: " + this.Deletions + "</li>"
                         + "</li>")
                 });
+            });
+            nodeHub
+            .invoke('GetGitDiff', 'Polemo.NetCore.Node', '1d87e759d70ac75db0757792f18220a78540644b')
+            .done(function (content) {
+                $("body").append("<div><h3>GetDiff Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<br\> <strong>msg:</strong> " 
+                   + "<pre>"+content.msg+"</pre>"
+                   + "</div>");
+            });
+            nodeHub
+            .invoke('GetUncommitDiff', 'Polemo.NetCore.Node')
+            .done(function (content) {
+                $("body").append("<div><h3>GetUncommitDiff Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<br\> <strong>msg:</strong> " 
+                   + "<pre>"+content.msg+"</pre>"
+                   + "</div>");
+            });
+            
+
+
+            
         });
     </script>
 </body>
