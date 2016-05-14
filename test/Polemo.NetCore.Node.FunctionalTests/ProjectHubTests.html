@@ -35,6 +35,17 @@
                      + $('<div/>').text(content.msg).html() 
                      + "</div>");
                 });
+                
+            nodeHub
+                .invoke('RemoveFile', 'Polemo.NetCore.Node', 'remove.txt')
+                .done(function (content) {
+                    $("body").append("<div><h3>ReadFile Test: </h3>"
+                     + "<strong>isSucceeded:</strong> " 
+                     + content.isSucceeded 
+                     + "<br\> <strong>msg:</strong> " 
+                     + $('<div/>').text(content.msg).html() 
+                     + "</div>");
+                });
         });
     </script>
 </body>

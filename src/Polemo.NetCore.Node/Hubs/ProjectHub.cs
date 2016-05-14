@@ -94,9 +94,24 @@ namespace Polemo.NetCore.Node.Hubs
             }
         }
 
-        public Task<object> RemoveFile(string projectName, string fileRelativePath)
+        public object RemoveFile(string projectName, string fileRelativePath)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string path = Path.Combine(Config.RootPath, projectName, fileRelativePath);
+                var file = new FileInfo(path);
+                if (file.Exists)
+                {
+                    file.Delete();
+                    return new {isSucceeded = true, msg = "删除成功"};
+                }
+                return new {isSucceeded = true, msg = "文件不存在"};
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new {isSucceeded = false, msg = ex.Message};
+            }
         }
 
         public Task<object> CreateFolder(string projectName, string baseDirectory, string directoryName)
