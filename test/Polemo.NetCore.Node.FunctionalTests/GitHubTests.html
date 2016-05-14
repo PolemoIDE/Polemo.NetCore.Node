@@ -20,6 +20,16 @@
                    + "</div>");
             })
 
+            nodeHub
+            .invoke('SwitchGitBranchs', 'Polemo.NetCore.Node', 'master')
+            .done(function (content) {
+                $("body").append("<div><h3>GetDiff Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<br\> <strong>msg:</strong>" 
+                   + "<pre>"+content.msg+"</pre>"
+                   + "</div>");
+            })
 
             nodeHub
             .invoke('GetGitBranchs', 'Polemo.NetCore.Node')
