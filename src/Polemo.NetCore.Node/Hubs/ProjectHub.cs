@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Extensions.Logging;
+using Polemo.NetCore.Node.Common;
 
 namespace Polemo.NetCore.Node.Hubs
 {
@@ -62,17 +63,27 @@ namespace Polemo.NetCore.Node.Hubs
         {
             try
             {
-                bool isNew = true;
+                bool isNew = true, hasRestore = false;
                 string path = Path.Combine(Environment.CurrentDirectory, projectName, fileRelativePath);
-                if (File.Exists(path))
+                var file = new FileInfo(path);
+                if (file.Exists)
                     isNew = false;
+                
+                if (file.Name.Equals("project.json", StringComparison.OrdinalIgnoreCase))
+                    hasRestore = true;
 
                 using (FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
                 {
                     using (StreamWriter writer = new StreamWriter(fileStream))
                     {
                         await writer.WriteAsync(fileContent);
-                        return new { isSucceeded = true, isNew = isNew };
+                        bool isRestored = true;
+                        if (hasRestore)
+                        {
+                            string projectPath = Path.Combine(Environment.CurrentDirectory, projectName);
+                            isRestored = Dotnet.Restore(projectPath);
+                        }
+                        return new { isSucceeded = true, isNew = isNew, isRestored = isRestored};
                     }
                 }
             }
