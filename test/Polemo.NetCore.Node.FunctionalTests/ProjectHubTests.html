@@ -9,10 +9,10 @@
         var nodeHub = nodeConnection.createHubProxy('PolemoHub');
         nodeConnection.start().done(function () {
             nodeHub
-                .invoke('readFile', 'Polemo.NetCore.Node', 'NuGet.config')
+                .invoke('ReadFile', 'Polemo.NetCore.Node', 'NuGet.config')
                 .done(function (content) {
-                    alert(content.msg);
-                }); 
+                    $("body").append("<div><h3>ReadFile Test: </h3><strong>isSucceeded:</strong> " + content.isSucceeded + "<br\> <strong>msg:</strong> " + $('<div/>').text(content.msg).html() + "</div>");
+                });
         });
     </script>
 </body>
