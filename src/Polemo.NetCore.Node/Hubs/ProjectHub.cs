@@ -35,7 +35,7 @@ namespace Polemo.NetCore.Node.Hubs
         {
             try
             {
-                string path = Path.Combine(Environment.CurrentDirectory, projectName, fileRelativePath);
+                string path = Path.Combine(Config.RootPath, projectName, fileRelativePath);
                 if (File.Exists(path))
                 {
                     using (FileStream fileStream = new FileStream(path, FileMode.Open))
@@ -64,7 +64,7 @@ namespace Polemo.NetCore.Node.Hubs
             try
             {
                 bool isNew = true, hasRestore = false;
-                string path = Path.Combine(Environment.CurrentDirectory, projectName, fileRelativePath);
+                string path = Path.Combine(Config.RootPath, projectName, fileRelativePath);
                 var file = new FileInfo(path);
                 if (file.Exists)
                     isNew = false;
@@ -80,7 +80,7 @@ namespace Polemo.NetCore.Node.Hubs
                         bool isRestored = true;
                         if (hasRestore)
                         {
-                            string projectPath = Path.Combine(Environment.CurrentDirectory, projectName);
+                            string projectPath = Path.Combine(Config.RootPath, projectName);
                             isRestored = Dotnet.Restore(projectPath);
                         }
                         return new { isSucceeded = true, isNew = isNew, isRestored = isRestored};

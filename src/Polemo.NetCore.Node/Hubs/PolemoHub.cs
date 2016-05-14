@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Polemo.NetCore.Node.Models;
 
 namespace Polemo.NetCore.Node.Hubs
 {
-    [HubName("polemo")]
     public partial class PolemoHub : Hub
     {
         private readonly ILogger _logger;
+        public static Config Config;
 
-        public PolemoHub(ILogger<PolemoHub> logger)
+        public PolemoHub(IServiceProvider serviceProvider, IConfiguration configuration, ILogger<PolemoHub> logger)
         {
             _logger = logger;
+            Config = new Config(serviceProvider, configuration);
         }
 
         public override Task OnConnected()

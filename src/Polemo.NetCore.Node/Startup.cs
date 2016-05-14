@@ -9,6 +9,8 @@ namespace Polemo.NetCore.Node
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddConfiguration();
+
             services.AddCors(c => c.AddPolicy("Polemo", x =>
                 x.AllowCredentials()
                     .AllowAnyOrigin()
@@ -22,21 +24,14 @@ namespace Polemo.NetCore.Node
             });
 
             services.AddAesCrypto();
-            services.AddSmtpEmailSender("smtp.exmail.qq.com", 25, "码锋科技", "service@codecomb.com", "service@codecomb.com", "Yuuko19931101");
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
             app.UseCors("Polemo");
-            app.UseIISPlatformHandler();
-
-            loggerFactory.AddConsole(LogLevel.Debug);
-
-            app.UseIISPlatformHandler();
-//            app.UseFileServer();
-
             app.UseWebSockets();
             app.UseSignalR();
+            loggerFactory.AddConsole(LogLevel.Debug);
         }
 
         public static void Main(string[] args) => WebApplication.Run<Startup>(args);
