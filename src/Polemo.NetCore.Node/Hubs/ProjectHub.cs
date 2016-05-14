@@ -184,7 +184,7 @@ namespace Polemo.NetCore.Node.Hubs
                 if (!Directory.Exists(oldPath))
                     return new { isSucceeded = false, msg = "源文件夹不存在" };
                 if (Directory.Exists(newPath))
-                    return new { isSucceeded = false, msg = "目标夹已存在" };
+                    return new { isSucceeded = false, msg = "目标文件夹已存在" };
                 Directory.Move(oldPath, newPath);
                 return new { isSucceeded = true, msg = "重命名成功" };
             }
