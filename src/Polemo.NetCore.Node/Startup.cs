@@ -27,14 +27,8 @@ namespace Polemo.NetCore.Node
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-            app.UseCors("Polemo");
-            app.UseIISPlatformHandler();
-
             loggerFactory.AddConsole(LogLevel.Debug);
-
-            app.UseIISPlatformHandler();
-//            app.UseFileServer();
-
+            app.UseCors("Polemo");
             app.UseWebSockets();
             app.UseSignalR();
         }
