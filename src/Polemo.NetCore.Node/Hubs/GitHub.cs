@@ -137,14 +137,14 @@ namespace Polemo.NetCore.Node.Hubs
             }
             
         }
-        public async Task<object> GetGitbranches(string projectName)
+        public async Task<object> GetGitBranches(string projectName)
         {
             try
             {
                 var proc = new Process();
                 proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
                 proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "branch --no-color";
+                proc.StartInfo.Arguments = "branch -a";
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardInput = true;
@@ -152,6 +152,7 @@ namespace Polemo.NetCore.Node.Hubs
                 proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
                 proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
                 proc.Start();
+                while (!proc.WaitForExit(500));
                 var output = proc.StandardOutput.ReadToEnd();
                 output = output.Replace("\r\n", "\n");
                 var _branches = output.Split('\n'); 
@@ -163,10 +164,6 @@ namespace Polemo.NetCore.Node.Hubs
                     branches.Add(_branches[i].Substring(1, _branches[i].Length - 1));
                     
                 }
-                // var branches = output.Split("\n");
-                // while (!proc.WaitForExit(500));
-
-
                 return new { isSucceeded = true, branches = branches , nowBranch = nowBranch};
             }
             catch (Exception ex)

@@ -62,7 +62,6 @@
                    + "<strong>nowBranch:"+ content.nowBranch+"</strong>"
                    + "</div>");
                 $.each(content.branches, function () {
-                    console.log(this)
                     $("#getbranchs").append(
                           "<li>"  + this + "</li>"
                         )
@@ -84,7 +83,6 @@
             nodeHub
             .invoke('GetGitLogs', 'Polemo.NetCore.Node')
             .done(function (content) {
-                console.log(content)
                 $("body").append("<div><h3>GetGitLogs Test: </h3>"
                    + "<strong>isSucceeded:</strong> " 
                    + content.isSucceeded 
