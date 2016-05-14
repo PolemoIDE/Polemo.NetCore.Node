@@ -142,7 +142,7 @@ namespace Polemo.NetCore.Node.Hubs
                 var directory = new DirectoryInfo(path);
                 if (directory.Exists)
                 {
-                    directory.Delete();
+                    directory.Delete(true);
                     return new { isSucceeded = true, msg = "删除成功" };
                 }
                 return new { isSucceeded = true, msg = "文件夹不存在" };
@@ -158,16 +158,14 @@ namespace Polemo.NetCore.Node.Hubs
         {
             try
             {
-                string oldFilepath = Path.Combine(Config.RootPath, projectName, fileDirectory, oldFileName);
+                string oldFilePath = Path.Combine(Config.RootPath, projectName, fileDirectory, oldFileName);
                 string newFilePath = Path.Combine(Config.RootPath, projectName, fileDirectory, newFileName);
-                var oldFile = new FileInfo(oldFilepath);
-                if(!oldFile.Exists)
+                if(!File.Exists(oldFilePath))
                     return new { isSucceeded = false, msg = "源文件不存在" };
-                var newFile = new FileInfo(newFilePath);
-                if (newFile.Exists)
+                if (File.Exists(newFilePath))
                     return new {isSucceeded = false, msg = "目标文件已存在"};
-                File.Copy(oldFilepath, newFilePath, false);
-                oldFile.Delete();
+                File.Copy(oldFilePath, newFilePath, false);
+                File.Delete(oldFilePath);
                 return new { isSucceeded = true, msg = "重命名成功" };
             }
             catch (Exception ex)
@@ -177,9 +175,24 @@ namespace Polemo.NetCore.Node.Hubs
             }
         }
 
-        public Task<object> RenameFolder(string projectName, string baseDirectory, string oldDirectoryName, string newDirectoryName)
+        public object RenameFolder(string projectName, string baseDirectory, string oldDirectoryName, string newDirectoryName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string oldPath = Path.Combine(Config.RootPath, projectName, baseDirectory, oldDirectoryName);
+                string newPath = Path.Combine(Config.RootPath, projectName, baseDirectory, newDirectoryName);
+                if (!Directory.Exists(oldPath))
+                    return new { isSucceeded = false, msg = "源文件夹不存在" };
+                if (Directory.Exists(newPath))
+                    return new { isSucceeded = false, msg = "目标夹已存在" };
+                Directory.Move(oldPath, newPath);
+                return new { isSucceeded = true, msg = "重命名成功" };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
         }
     }
 }

@@ -79,6 +79,17 @@
                      + $('<div/>').text(content.msg).html() 
                      + "</div>");
                 });
+                
+            nodeHub
+                .invoke('RenameFolder', 'Polemo.NetCore.Node', '', 'a', 'b')
+                .done(function (content) {
+                    $("body").append("<div><h3>RenameFolder Test: </h3>"
+                     + "<strong>isSucceeded:</strong> " 
+                     + content.isSucceeded 
+                     + "<br\> <strong>msg:</strong> " 
+                     + $('<div/>').text(content.msg).html() 
+                     + "</div>");
+                });
         });
     </script>
 </body>
