@@ -10,16 +10,13 @@ using Polemo.NetCore.Node.Models;
 namespace Polemo.NetCore.Node.Hubs
 {
     public partial class PolemoHub
-    {   
-
+    { 
         private static List<Commit> Parse(string src)
         {
 
             var ret = new List<Commit>();
             src = src.Replace("\r\n", "\n");
             var logs = src.Split(new string[] { "--split--" }, StringSplitOptions.None);
-            Console.WriteLine(src);
-            Console.WriteLine(logs.Count());
 
             for (var j =1; j < logs.Count(); j++)
             {
@@ -28,11 +25,10 @@ namespace Polemo.NetCore.Node.Hubs
                     Deletions = 0,
                     FilesChange = 0,
                  };
-                
-                var tmp = logs[j].Split('\n');
-                
+
+                var tmp = logs[j].Split('\n');                
                 for (var i =0; i < tmp.Count(); i++){
-                    
+
                     if (string.IsNullOrWhiteSpace(tmp[i]))
                         continue;
                     var splited = tmp[i].Split(new string[] { "-::-" }, StringSplitOptions.None);
@@ -57,7 +53,7 @@ namespace Polemo.NetCore.Node.Hubs
             
             return ret;
         }
-         
+        
         public async Task<object> GetGitLogs(string projectName)
         {
             try
@@ -81,6 +77,65 @@ namespace Polemo.NetCore.Node.Hubs
                 _logger.LogError(ex.StackTrace);
                 return new { isSucceeded = false, msg = ex.Message };
             }
+        }
+        
+        public async Task<object> GetDiff(string projectName, string commit)
+        {
+            try
+            {
+                var proc = new Process();
+                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
+                proc.StartInfo.FileName = "git";
+                proc.StartInfo.Arguments = "--no-pager show --pretty=\"\" " + commit;
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardInput = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
+                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                proc.Start();
+                var output = proc.StandardOutput.ReadToEnd();
+                var error = proc.StandardError.ReadToEnd();
+                while (!proc.WaitForExit(500));
+                if (proc.ExitCode != 0)
+                    return new { isSucceeded = false, msg = error};
+                return new { isSucceeded = true, msg = output };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
+        }
+        
+        public async Task<object> GetUncommitDiff(string projectName)
+        {
+            try
+            {
+                var proc = new Process();
+                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
+                proc.StartInfo.FileName = "git";
+                proc.StartInfo.Arguments = "--no-pager show --pretty=\"\" ";
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardInput = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
+                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                proc.Start();
+                var output = proc.StandardOutput.ReadToEnd();
+                var error = proc.StandardError.ReadToEnd();
+                while (!proc.WaitForExit(500));
+                if (proc.ExitCode != 0)
+                    return new { isSucceeded = false, msg = error};
+                return new { isSucceeded = true, msg = output };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
+            
         }
 
     }
