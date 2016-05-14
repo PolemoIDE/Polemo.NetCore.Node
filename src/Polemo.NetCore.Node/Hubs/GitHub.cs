@@ -176,6 +176,35 @@ namespace Polemo.NetCore.Node.Hubs
             }
             
         }
+        public async Task<object> CreateGitBranchs(string projectName, string branchName, string baseBranchName = "")
+        {
+            try
+            {
+                var proc = new Process();
+                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
+                proc.StartInfo.FileName = "git";
+                proc.StartInfo.Arguments = "checkout -b" + branchName + baseBranchName;
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardInput = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
+                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+                proc.Start();
+                while (!proc.WaitForExit(500));
+                var output = proc.StandardOutput.ReadToEnd();
+                var error = proc.StandardError.ReadToEnd();                
+                if (proc.ExitCode != 0)
+                    return new { isSucceeded = false, msg = error};
+                return new { isSucceeded = true, msg = output };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
+            
+        }
 
 
     }

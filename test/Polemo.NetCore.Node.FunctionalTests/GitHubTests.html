@@ -10,6 +10,18 @@
         var nodeHub = nodeConnection.createHubProxy('PolemoHub');
         nodeConnection.start().done(function () {
             nodeHub
+            .invoke('CreateGitBranchs', 'Polemo.NetCore.Node', 'wph', '')
+            .done(function (content) {
+                $("body").append("<div><h3>GetDiff Test: </h3>"
+                   + "<strong>isSucceeded:</strong> " 
+                   + content.isSucceeded 
+                   + "<br\> <strong>msg:</strong> " 
+                   + "<pre>"+content.msg+"</pre>"
+                   + "</div>");
+            })
+
+
+            nodeHub
             .invoke('GetGitBranchs', 'Polemo.NetCore.Node')
             .done(function (content) {
                 console.log(content)
