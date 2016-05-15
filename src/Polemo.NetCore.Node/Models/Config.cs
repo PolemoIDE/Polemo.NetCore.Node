@@ -23,7 +23,7 @@ namespace Polemo.NetCore.Node.Models
                 var path = _configuration["RootPath"];
                 if (string.IsNullOrEmpty(path))
                 {
-                    var appEnv = _serviceProvider.GetRequiredService<IApplicationEnvironment>();
+                    var appEnv = _serviceProvider.GetRequiredService<ApplicationEnvironment>();
                     return appEnv.ApplicationBasePath;
                 }
                 return path;
@@ -37,7 +37,7 @@ namespace Polemo.NetCore.Node.Models
                 var path = _configuration["OmniSharpPath"];
                 if (string.IsNullOrEmpty(path))
                 {
-                    var appEnv = _serviceProvider.GetRequiredService<IApplicationEnvironment>();
+                    var appEnv = _serviceProvider.GetRequiredService<ApplicationEnvironment>();
                     return appEnv.ApplicationBasePath;
                 }
                 return path;

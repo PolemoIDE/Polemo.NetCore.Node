@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -23,17 +23,14 @@ namespace Polemo.NetCore.Node
                 options.Hubs.EnableDetailedErrors = true;
             });
 
-            services.AddAesCrypto();
+            services.AddLogging();
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddConsole(minLevel: LogLevel.Warning);
             app.UseCors("Polemo");
-            app.UseWebSockets();
             app.UseSignalR();
-            loggerFactory.AddConsole(LogLevel.Debug);
         }
-
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
     }
 }
