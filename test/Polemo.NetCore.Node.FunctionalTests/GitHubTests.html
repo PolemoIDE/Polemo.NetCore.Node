@@ -6,7 +6,7 @@
 </head>
 <body>
     <script>
-        var nodeConnection = $.hubConnection('http://localhost:50556');
+        var nodeConnection = $.hubConnection('http://localhost:5000');
         var nodeHub = nodeConnection.createHubProxy('PolemoHub');
         nodeConnection.start().done(function () {
             nodeHub

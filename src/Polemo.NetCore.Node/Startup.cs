@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +8,7 @@ namespace Polemo.NetCore.Node
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddConfiguration();
+//            services.AddConfiguration();
 
             services.AddCors(c => c.AddPolicy("Polemo", x =>
                 x.AllowCredentials()
@@ -28,7 +27,7 @@ namespace Polemo.NetCore.Node
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(minLevel: LogLevel.Warning);
+            loggerFactory.AddConsole(minLevel: LogLevel.Debug);
             app.UseCors("Polemo");
             app.UseSignalR();
         }
