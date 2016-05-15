@@ -54,7 +54,7 @@ namespace Polemo.NetCore.Node.Hubs
             return ret;
         }
         
-        public async Task<object> GetGitLogs(string projectName)
+        public object GetGitLogs(string projectName)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace Polemo.NetCore.Node.Hubs
             }
         }
         
-        public async Task<object> GetGitDiff(string projectName, string commit)
+        public object GetGitDiff(string projectName, string commit)
         {
             try
             {
@@ -108,7 +108,7 @@ namespace Polemo.NetCore.Node.Hubs
             }
         }
         
-        public async Task<object> GetUncommitDiff(string projectName)
+        public object GetUncommitDiff(string projectName)
         {
             try
             {
@@ -137,7 +137,7 @@ namespace Polemo.NetCore.Node.Hubs
             }
             
         }
-        public async Task<object> GetGitBranches(string projectName)
+        public object GetGitBranches(string projectName)
         {
             try
             {
@@ -173,7 +173,7 @@ namespace Polemo.NetCore.Node.Hubs
             }
             
         }
-        public async Task<object> CreateGitBranches(string projectName, string branchName, string baseBranchName = "")
+        public object CreateGitBranches(string projectName, string branchName, string baseBranchName = "")
         {
             try
             {
@@ -202,7 +202,7 @@ namespace Polemo.NetCore.Node.Hubs
             }
             
         }
-        public async Task<object> SwitchGitBranches(string projectName, string branchName)
+        public object SwitchGitBranches(string projectName, string branchName)
         {
             try
             {
@@ -231,7 +231,7 @@ namespace Polemo.NetCore.Node.Hubs
             }
             
         }
-        public async Task<object> DeleteGitBranches(string projectName, string branchName)
+        public object DeleteGitBranches(string projectName, string branchName)
         {
             try
             {
@@ -261,7 +261,7 @@ namespace Polemo.NetCore.Node.Hubs
             
         }
         
-        public async Task<object> CreateGitCommit(string projectName, string title, string description)
+        public object CreateGitCommit(string projectName, string title, string description)
         {
             try
             {
@@ -291,7 +291,7 @@ namespace Polemo.NetCore.Node.Hubs
             
         }
         
-        public async Task<object> CreateGitPush(string projectName, string repository, string refspec)
+        public object CreateGitPush(string projectName, string repository, string refspec)
         {
             try
             {
@@ -320,7 +320,7 @@ namespace Polemo.NetCore.Node.Hubs
             }
             
         }
-        public async Task<object> CreateGitPull(string projectName, string repository, string refspec)
+        public object CreateGitPull(string projectName, string repository, string refspec)
         {
             try
             {
