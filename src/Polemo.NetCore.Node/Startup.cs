@@ -22,13 +22,15 @@ namespace Polemo.NetCore.Node
             {
                 options.Hubs.EnableDetailedErrors = true;
             });
+
+            services.AddLogging();
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddConsole(minLevel: LogLevel.Warning);
             app.UseCors("Polemo");
             app.UseSignalR();
-            loggerFactory.AddConsole(LogLevel.Debug);
         }
     }
 }
