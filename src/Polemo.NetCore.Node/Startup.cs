@@ -8,7 +8,7 @@ namespace Polemo.NetCore.Node
     {
         public void ConfigureServices(IServiceCollection services)
         {
-//            services.AddConfiguration();
+            services.AddConfiguration();
 
             services.AddCors(c => c.AddPolicy("Polemo", x =>
                 x.AllowCredentials()

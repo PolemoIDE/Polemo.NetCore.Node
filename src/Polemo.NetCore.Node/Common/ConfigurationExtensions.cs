@@ -27,8 +27,9 @@ namespace Microsoft.Extensions.DependencyInjection
             var env = services.GetRequiredService<IHostingEnvironment>();
 
             var builder = new ConfigurationBuilder()
-                .AddJsonFile(Path.Combine(env.ContentRootPath, $"{fileName}.json"))
-                .AddJsonFile(Path.Combine(env.ContentRootPath, $"{fileName}.{env.EnvironmentName}.json"), optional: true);
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile($"{fileName}.json")
+                .AddJsonFile($"{fileName}.{env.EnvironmentName}.json", optional: true);
             var configuration = builder.Build();
             self.AddSingleton<IConfiguration>(configuration);
 
