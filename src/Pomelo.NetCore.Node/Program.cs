@@ -10,8 +10,8 @@ namespace Pomelo.NetCore.Node
             var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                    .UseStartup<Startup>()
-                    .Build();
+                .UseStartup<Startup>()
+                .Build();
 
             host.Run();
         }
