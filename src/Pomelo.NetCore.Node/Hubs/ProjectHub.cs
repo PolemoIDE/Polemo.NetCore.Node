@@ -12,7 +12,7 @@ namespace Pomelo.NetCore.Node.Hubs
 {
     public partial class PomeloHub
     {
-        public object GetCommands(string projectName)
+        public object GetProjectInfo(string projectName)
         {
             try
             {
@@ -20,10 +20,10 @@ namespace Pomelo.NetCore.Node.Hubs
                 if (!Directory.Exists(path))
                     return new {isSucceeded = false, msg = $"项目\"{projectName}\"不存在"};
 
-                var commands = Dotnet.GetCommands(path);
-                if (commands == null)
-                    return new {isSucceeded = false, msg = "没有找到commands"};
-                return JsonConvert.SerializeObject(commands);
+                var title = Dotnet.GetProjectInfo(path);
+                if (title == null)
+                    return new {isSucceeded = false, msg = "没有找到title"};
+                return JsonConvert.SerializeObject(title);
             }
             catch (Exception ex)
             {

@@ -9,7 +9,7 @@
         var nodeHub = nodeConnection.createHubProxy('PomeloHub');
         nodeConnection.start().done(function () {
             nodeHub
-                .invoke('StartOminisharp', 'Polemo.NetCore.Node\\newtest')
+                .invoke('StartOminisharp', 'Pomelo.NetCore.Node\\newtest')
                 .done(function (content) {
                     $("body").append("<div><h3>StartOminisharp Test: </h3>"
                     + "<strong>isSucceeded:</strong> " 
@@ -20,7 +20,7 @@
                 });
                 
             nodeHub
-                .invoke('AutoComplete', 'Polemo.NetCore.Node\\newtest', 'test.cs', 0, 1, 'us')
+                .invoke('AutoComplete', 'Pomelo.NetCore.Node\\newtest', 'test.cs', 0, 1, 'us')
                 .done(function (content) {
                     $("body").append("<div><h3>AutoComplete Test: </h3>"
                     + "<strong>isSucceeded:</strong> " 

@@ -10,7 +10,7 @@
         var nodeHub = nodeConnection.createHubProxy('PomeloHub');
         nodeConnection.start().done(function () {
             nodeHub
-            .invoke('CreateGitBranches', 'Polemo.NetCore.Node', 'wph', '')
+            .invoke('CreateGitBranches', 'Pomelo.NetCore.Node', 'wph', '')
             .done(function (content) {
                 $("body").append("<div><h3>CreateGitBranches Test: </h3>"
                    + "<strong>isSucceeded:</strong> " 
@@ -20,7 +20,7 @@
                    + "</div>");
             })
             nodeHub
-            .invoke('DeleteGitBranches', 'Polemo.NetCore.Node', 'wph')
+            .invoke('DeleteGitBranches', 'Pomelo.NetCore.Node', 'wph')
             .done(function (content) {
                 $("body").append("<div><h3>DeleteGitBranches Test: </h3>"
                    + "<strong>isSucceeded:</strong> " 
@@ -31,7 +31,7 @@
             })
 
             nodeHub
-            .invoke('SwitchGitBranches', 'Polemo.NetCore.Node', 'master')
+            .invoke('SwitchGitBranches', 'Pomelo.NetCore.Node', 'master')
             .done(function (content) {
                 $("body").append("<div><h3>SwitchGitBranches Test: </h3>"
                    + "<strong>isSucceeded:</strong> " 
@@ -41,7 +41,7 @@
                    + "</div>");
             })
             nodeHub
-            .invoke('DeleteGitBranches', 'Polemo.NetCore.Node', 'wph')
+            .invoke('DeleteGitBranches', 'Pomelo.NetCore.Node', 'wph')
             .done(function (content) {
                 $("body").append("<div><h3>DeleteGitBranches Test: </h3>"
                    + "<strong>isSucceeded:</strong> " 
@@ -52,7 +52,7 @@
             })
 
             nodeHub
-            .invoke('GetGitBranches', 'Polemo.NetCore.Node')
+            .invoke('GetGitBranches', 'Pomelo.NetCore.Node')
             .done(function (content) {
                 console.log(content)
                 $("body").append("<div><h3>GetGitBranches Test: </h3>"
@@ -69,7 +69,7 @@
             });
 
             nodeHub
-            .invoke('CreateGitCommit', 'Polemo.NetCore.Node', 'title', 'description')
+            .invoke('CreateGitCommit', 'Pomelo.NetCore.Node', 'title', 'description')
             .done(function (content) {
                 $("body").append("<div><h3>CreateGitCommit Test: </h3>"
                    + "<strong>isSucceeded:</strong> " 
@@ -81,7 +81,7 @@
 
 
             nodeHub
-            .invoke('GetGitLogs', 'Polemo.NetCore.Node')
+            .invoke('GetGitLogs', 'Pomelo.NetCore.Node')
             .done(function (content) {
                 $("body").append("<div><h3>GetGitLogs Test: </h3>"
                    + "<strong>isSucceeded:</strong> " 
@@ -102,7 +102,7 @@
                 });
             });
             nodeHub
-            .invoke('GetGitDiff', 'Polemo.NetCore.Node', '1d87e759d70ac75db0757792f18220a78540644b')
+            .invoke('GetGitDiff', 'Pomelo.NetCore.Node', '1d87e759d70ac75db0757792f18220a78540644b')
             .done(function (content) {
                 $("body").append("<div><h3>GetDiff Test: </h3>"
                    + "<strong>isSucceeded:</strong> " 
@@ -112,7 +112,7 @@
                    + "</div>");
             });
             nodeHub
-            .invoke('GetUncommitDiff', 'Polemo.NetCore.Node')
+            .invoke('GetUncommitDiff', 'Pomelo.NetCore.Node')
             .done(function (content) {
                 $("body").append("<div><h3>GetUncommitDiff Test: </h3>"
                    + "<strong>isSucceeded:</strong> " 

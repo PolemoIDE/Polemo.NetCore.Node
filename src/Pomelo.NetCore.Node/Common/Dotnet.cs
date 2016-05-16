@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using Pomelo.NetCore.Node.Models;
@@ -13,9 +12,9 @@ namespace Pomelo.NetCore.Node.Common
             throw new NotImplementedException();
         }
 
-        public static CommandInfos GetCommands(string projectPath)
+        public static ProjectInfo GetProjectInfo(string projectPath)
         {
-            var commandInfos = new CommandInfos();
+            var commandInfos = new ProjectInfo();
             foreach (var file in FileHelper.SearchAllFiles(projectPath, "project.json"))
             {
                 var command = new Command();
@@ -27,28 +26,9 @@ namespace Pomelo.NetCore.Node.Common
                 var titleProp = root.Property("title");
                 string title = titleProp != null ? titleProp.Value.ToString() : fileDirectoryName;
                 command.Title = title;
-                var commandArray = SearchCommand(root);
-                if (commandArray == null)
-                    return null;
-                command.CommandArray = commandArray;
                 commandInfos.Commands.Add(command);
             }
             return commandInfos;
-        }
-
-        private static IEnumerable<string> SearchCommand(JObject root)
-        {
-            List<string> commands = new List<string>();
-            var commandsProperty = root.Property("commands");
-            if (commandsProperty == null)
-                return null;
-
-            foreach (var jToken in commandsProperty.Values())
-            {
-                var property = (JProperty) jToken;
-                commands.Add(property.Name);
-            }
-            return commands;
         }
     }
 }

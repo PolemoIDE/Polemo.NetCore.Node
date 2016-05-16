@@ -9,7 +9,7 @@
         var nodeHub = nodeConnection.createHubProxy('PomeloHub');
         nodeConnection.start().done(function () {
             nodeHub
-                .invoke('ReadFile', 'Polemo.NetCore.Node', 'NuGet.config')
+                .invoke('ReadFile', 'Pomelo.NetCore.Node', 'NuGet.config')
                 .done(function (content) {
                     $("body").append("<div><h3>ReadFile Test: </h3>"
                     + "<strong>isSucceeded:</strong> " 
@@ -20,7 +20,7 @@
                 });
 
             nodeHub
-                .invoke('WriteFile', 'Polemo.NetCore.Node', 'Test.cs', 'test write ' + +new Date)
+                .invoke('WriteFile', 'Pomelo.NetCore.Node', 'Test.cs', 'test write ' + +new Date)
                 .done(function (content) {
                     $("body").append("<div><h3>WriteFile Test: </h3>"
                     + "<strong>isSucceeded:</strong> " 
@@ -37,7 +37,7 @@
                 });
 
             nodeHub
-                .invoke('RemoveFile', 'Polemo.NetCore.Node', 'remove.txt')
+                .invoke('RemoveFile', 'Pomelo.NetCore.Node', 'remove.txt')
                 .done(function (content) {
                     $("body").append("<div><h3>RemoveFile Test: </h3>"
                     + "<strong>isSucceeded:</strong> " 
@@ -48,7 +48,7 @@
                 });
 
             nodeHub
-                .invoke('CreateFolder', 'Polemo.NetCore.Node', '', 'txt')
+                .invoke('CreateFolder', 'Pomelo.NetCore.Node', '', 'txt')
                 .done(function (content) {
                     $("body").append("<div><h3>CreateFolder Test: </h3>"
                     + "<strong>isSucceeded:</strong> " 
@@ -59,7 +59,7 @@
                 });
 
             nodeHub
-                .invoke('RemoveFolder', 'Polemo.NetCore.Node', 'txt')
+                .invoke('RemoveFolder', 'Pomelo.NetCore.Node', 'txt')
                 .done(function (content) {
                     $("body").append("<div><h3>RemoveFolder Test: </h3>"
                     + "<strong>isSucceeded:</strong> " 
@@ -70,7 +70,7 @@
                 });
 
             nodeHub
-                .invoke('RenameFile', 'Polemo.NetCore.Node', '', 'a.txt', 'b.txt')
+                .invoke('RenameFile', 'Pomelo.NetCore.Node', '', 'a.txt', 'b.txt')
                 .done(function (content) {
                     $("body").append("<div><h3>RenameFile Test: </h3>"
                     + "<strong>isSucceeded:</strong> " 
@@ -81,7 +81,7 @@
                 });
 
             nodeHub
-                .invoke('RenameFolder', 'Polemo.NetCore.Node', '', 'a', 'b')
+                .invoke('RenameFolder', 'Pomelo.NetCore.Node', '', 'a', 'b')
                 .done(function (content) {
                     $("body").append("<div><h3>RenameFolder Test: </h3>"
                     + "<strong>isSucceeded:</strong> " 
@@ -92,10 +92,10 @@
                 });
                 
             nodeHub
-                .invoke('GetCommands', 'Polemo.NetCore.Node')
+                .invoke('GetProjectInfo', 'Pomelo.NetCore.Node')
                 .done(function (content) {
-                    $("body").append("<div><h3>GetCommands Test: </h3>"
-                     + "<strong>commands:</strong> " 
+                    $("body").append("<div><h3>GetProjectInfo Test: </h3>"
+                     + "<strong>ProjectInfo:</strong> " 
                      + $('<div/>').text(content).html() 
                      + "</div>");
                 });

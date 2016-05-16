@@ -93,7 +93,7 @@ namespace Pomelo.NetCore.Node
             }
 
             Logger.LogInformation($"solution_path: {solutionPath}");
-            var omniPort = FreePort.FindNextAvailableTCPPort(5000);
+            var omniPort = FreePort.FindNextAvailableTCPPort(3000);
             Logger.LogInformation($"omni_port: {omniPort}");
             var args = $" -s \"{solutionPath}\" -p {omniPort} --hostPID {Environment.CurrentManagedThreadId}";
             var fullFileName = Path.Combine(Config.OmniSharpPath, Config.OmniSharpExe);

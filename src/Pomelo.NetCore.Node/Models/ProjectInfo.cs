@@ -3,12 +3,12 @@ using Newtonsoft.Json;
 
 namespace Pomelo.NetCore.Node.Models
 {
-    public class CommandInfos
+    public class ProjectInfo
     {
-        [JsonProperty("ProjectCommands")]
+        [JsonProperty("Project")]
         public List<Command> Commands { get; set; }
 
-        public CommandInfos()
+        public ProjectInfo()
         {
             Commands = new List<Command>();
         }
@@ -17,9 +17,6 @@ namespace Pomelo.NetCore.Node.Models
     public class Command
     {
         public string Title { get; set; }
-
-        [JsonProperty("Commands")]
-        public IEnumerable<string> CommandArray { get; set; }
 
         public string Path { get; set; }
     }
