@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -27,15 +27,30 @@ namespace Pomelo.NetCore.Node
 
         public async Task<string> Run()
         {
-            using (HttpClient client = new HttpClient())
+//            using (HttpClient client = new HttpClient())
+//            {
+//                if (Timeout > 0)
+//                    client.Timeout = new TimeSpan(Timeout);
+//                var response = await client.PostAsync(Url, new StringContent(Data, Encoding.UTF8, "application/json"));
+//                var result = await response.Content.ReadAsStringAsync();
+//                return result;
+//            }
+
+            var httpReq = (HttpWebRequest) WebRequest.Create(Url);
+            httpReq.Method = "POST";
+            httpReq.ContentType = httpReq.Accept = "application/json";
+
+            using (var stream = await httpReq.GetRequestStreamAsync())
+            using (var sw = new StreamWriter(stream))
             {
-                if (Timeout > 0)
-                    client.Timeout = new TimeSpan(Timeout);
-                // bug: One or more errors occurred
-                var response = await client.PostAsync(Url, new StringContent(Data)).ContinueWith(
-                    postTask => postTask.Result.EnsureSuccessStatusCode());
-                var result = await response.Content.ReadAsStringAsync();
-                return result;
+                sw.Write(Data);
+            }
+
+            using (var response = await httpReq.GetResponseAsync())
+            using (var stream = response.GetResponseStream())
+            using (var reader = new StreamReader(stream))
+            {
+                return await reader.ReadToEndAsync();
             }
         }
     }
@@ -64,7 +79,7 @@ namespace Pomelo.NetCore.Node
             int timeout = 0)
         {
             if (string.IsNullOrWhiteSpace(solutionPath) || !ServerPorts.ContainsKey(solutionPath))
-                return null;
+                await CreateOmnisharpServerSubprocess(solutionPath);
 
             var para = new Dictionary<string, string>
             {
@@ -73,7 +88,7 @@ namespace Pomelo.NetCore.Node
                 {"buffer", ""},
                 {"filename", ""}
             };
-            para = param?.Update(para);
+            para = para.UpdateBy(param);
             var host = "localhost";
             var port = ServerPorts[solutionPath];
             var url = $"http://{host}:{port}{endpoint}";
@@ -84,7 +99,7 @@ namespace Pomelo.NetCore.Node
             return result;
         }
 
-        public string CreateOmnisharpServerSubprocess(string solutionPath)
+        public async Task<string> CreateOmnisharpServerSubprocess(string solutionPath)
         {
             if (LauncherProcs.ContainsKey(solutionPath))
             {
@@ -93,16 +108,16 @@ namespace Pomelo.NetCore.Node
             }
 
             Logger.LogInformation($"solution_path: {solutionPath}");
-            var omniPort = FreePort.FindNextAvailableTCPPort(3000);
+            var omniPort = FreePort.FindNextAvailableTCPPort(2000);
             Logger.LogInformation($"omni_port: {omniPort}");
             var args = $" -s \"{solutionPath}\" -p {omniPort} --hostPID {Environment.CurrentManagedThreadId}";
             var fullFileName = Path.Combine(Config.OmniSharpPath, Config.OmniSharpExe);
             Logger.LogInformation($"OmniSharpExePath: {fullFileName}");
             Logger.LogInformation($"args: {args}");
-            var result = ProcessHelper.Run(Config.OmniSharpPath, fullFileName, args);
+            ProcessHelper.Run(Config.OmniSharpPath, fullFileName, args);
             LauncherProcs[solutionPath] = true;
             ServerPorts[solutionPath] = omniPort;
-            return result;
+            return "成功";
         }
 
         public async Task CloseOmnisharpServerSubprocess(string solutionPath)
@@ -117,7 +132,7 @@ namespace Pomelo.NetCore.Node
         public async Task<string> restart_omnisharp_server_subprocess(string solutionPath)
         {
             await CloseOmnisharpServerSubprocess(solutionPath);
-            return CreateOmnisharpServerSubprocess(solutionPath);
+            return await CreateOmnisharpServerSubprocess(solutionPath);
         }
     }
 }
