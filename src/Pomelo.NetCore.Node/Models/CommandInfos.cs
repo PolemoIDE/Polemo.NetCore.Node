@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Polemo.NetCore.Node.Models
+namespace Pomelo.NetCore.Node.Models
 {
     public class CommandInfos
     {

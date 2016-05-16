@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Polemo.NetCore.Node
+namespace Pomelo.NetCore.Node
 {
     public class Program
     {

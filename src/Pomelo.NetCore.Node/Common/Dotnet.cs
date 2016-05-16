@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json.Linq;
-using Polemo.NetCore.Node.Models;
+using Pomelo.NetCore.Node.Models;
 
-namespace Polemo.NetCore.Node.Common
+namespace Pomelo.NetCore.Node.Common
 {
     public static class Dotnet
     {

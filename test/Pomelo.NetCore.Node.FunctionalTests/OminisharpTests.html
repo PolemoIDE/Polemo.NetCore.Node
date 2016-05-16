@@ -6,7 +6,7 @@
 <body>
     <script>
         var nodeConnection = $.hubConnection('http://localhost:5000');
-        var nodeHub = nodeConnection.createHubProxy('PolemoHub');
+        var nodeHub = nodeConnection.createHubProxy('PomeloHub');
         nodeConnection.start().done(function () {
             nodeHub
                 .invoke('StartOminisharp', 'Polemo.NetCore.Node\\newtest')

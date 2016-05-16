@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Polemo.NetCore.Node.Common;
-using Polemo.NetCore.Node.Models;
+using Pomelo.NetCore.Node.Common;
+using Pomelo.NetCore.Node.Models;
 
-namespace Polemo.NetCore.Node
+namespace Pomelo.NetCore.Node
 {
     class WorkerThread
     {

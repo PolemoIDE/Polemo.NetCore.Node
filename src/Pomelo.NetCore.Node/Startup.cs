@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Polemo.NetCore.Node
+namespace Pomelo.NetCore.Node
 {
     public class Startup
     {
@@ -10,7 +10,7 @@ namespace Polemo.NetCore.Node
         {
             services.AddConfiguration();
 
-            services.AddCors(c => c.AddPolicy("Polemo", x =>
+            services.AddCors(c => c.AddPolicy("Pomelo", x =>
                 x.AllowCredentials()
                     .AllowAnyOrigin()
                     .AllowAnyMethod()
@@ -28,7 +28,7 @@ namespace Polemo.NetCore.Node
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(minLevel: LogLevel.Debug);
-            app.UseCors("Polemo");
+            app.UseCors("Pomelo");
             app.UseSignalR();
         }
     }

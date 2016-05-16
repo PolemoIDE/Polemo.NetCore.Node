@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Polemo.NetCore.Node.Common;
+using Pomelo.NetCore.Node.Common;
 
-namespace Polemo.NetCore.Node.Hubs
+namespace Pomelo.NetCore.Node.Hubs
 {
-    public partial class PolemoHub
+    public partial class PomeloHub
     {
         public object GetCommands(string projectName)
         {

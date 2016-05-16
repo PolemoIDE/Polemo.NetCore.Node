@@ -5,11 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Polemo.NetCore.Node.Models;
+using Pomelo.NetCore.Node.Models;
 
-namespace Polemo.NetCore.Node.Hubs
+namespace Pomelo.NetCore.Node.Hubs
 {
-    public partial class PolemoHub
+    public partial class PomeloHub
     { 
         private static List<Commit> Parse(string src)
         {

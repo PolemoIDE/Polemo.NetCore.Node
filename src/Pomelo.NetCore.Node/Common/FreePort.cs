@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
 
-namespace Polemo.NetCore.Node.Common
+namespace Pomelo.NetCore.Node.Common
 {
     public class FreePort
     {

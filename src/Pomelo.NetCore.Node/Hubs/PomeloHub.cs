@@ -3,19 +3,19 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Polemo.NetCore.Node.Models;
+using Pomelo.NetCore.Node.Models;
 
-namespace Polemo.NetCore.Node.Hubs
+namespace Pomelo.NetCore.Node.Hubs
 {
-    public partial class PolemoHub : Hub
+    public partial class PomeloHub : Hub
     {
         private readonly ILogger _logger;
         public static Config Config;
         public static OmniSharp OmniSharp;
 
-        public PolemoHub(IServiceProvider serviceProvider, IConfiguration configuration, ILoggerFactory loggerFactory)
+        public PomeloHub(IServiceProvider serviceProvider, IConfiguration configuration, ILoggerFactory loggerFactory)
         {
-            _logger = loggerFactory.CreateLogger<PolemoHub>();
+            _logger = loggerFactory.CreateLogger<PomeloHub>();
             Config = new Config(serviceProvider, configuration);
             OmniSharp = new OmniSharp(serviceProvider, configuration, loggerFactory);
         }

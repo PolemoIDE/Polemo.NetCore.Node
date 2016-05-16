@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Polemo.NetCore.Node.Common
+namespace Pomelo.NetCore.Node.Common
 {
     public class ProcessHelper
     {

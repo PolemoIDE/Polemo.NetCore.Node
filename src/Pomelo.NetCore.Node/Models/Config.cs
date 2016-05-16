@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Polemo.NetCore.Node.Models
+namespace Pomelo.NetCore.Node.Models
 {
     public class Config
     {

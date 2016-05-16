@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Polemo.NetCore.Node.Common
+namespace Pomelo.NetCore.Node.Common
 {
     public static class DictionaryHelper
     {
