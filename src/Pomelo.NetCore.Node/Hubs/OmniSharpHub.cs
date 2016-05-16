@@ -8,13 +8,13 @@ namespace Pomelo.NetCore.Node.Hubs
 {
     public partial class PomeloHub
     {
-        public async Task<object> StartOminisharp(string projectName)
+        public object StartOminisharp(string projectName)
         {
             try
             {
                 var solutionPath = Path.Combine(Config.RootPath, projectName);
-                var result = await OmniSharp.CreateOmnisharpServerSubprocess(solutionPath);
-                return new {isSucceeded = true, msg = result };
+                var result = OmniSharp.CreateOmnisharpServerSubprocess(solutionPath);
+                return new {isSucceeded = true, msg = result ? "启动成功" : "启动失败" };
             }
             catch (Exception ex)
             {

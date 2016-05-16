@@ -54,18 +54,6 @@ namespace Pomelo.NetCore.Node.Models
             }
         }
 
-        public string KeyFullName
-        {
-            get
-            {
-                var path = _configuration["KeyFullName"];
-                if (string.IsNullOrEmpty(path))
-                {
-                    var appEnv = _serviceProvider.GetRequiredService<ApplicationEnvironment>();
-                    return Path.Combine(appEnv.ApplicationBasePath, "key.config");
-                }
-                return path;
-            }
-        }
+        public string SecretKey => _configuration["SecretKey"];
     }
 }

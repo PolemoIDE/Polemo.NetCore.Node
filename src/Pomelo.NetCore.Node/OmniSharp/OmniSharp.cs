@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -18,13 +19,11 @@ namespace Pomelo.NetCore.Node
         private string Url { get; set; }
         private string Data { get; set; }
         private int Timeout { get; set; }
-        
-        private int port { get; set; }
         private string endpoint { get; set; }
 
-        public WorkerThread(int port, string endpoint, string data, int timeout)
+        public WorkerThread(string url, string endpoint, string data, int timeout)
         {
-            this.port = port;
+            this.Url = url;
             this.endpoint = endpoint;
             Data = data;
             Timeout = timeout;
@@ -34,7 +33,7 @@ namespace Pomelo.NetCore.Node
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri($"http://localhost:{port}");
+                client.BaseAddress = new Uri(Url);
                 var response = await client.PostAsync(endpoint, new StringContent(Data, Encoding.UTF8, "application/json"));
                 var result = await response.Content.ReadAsStringAsync();
                 return result;
@@ -66,7 +65,7 @@ namespace Pomelo.NetCore.Node
             int timeout = 0)
         {
             if (string.IsNullOrWhiteSpace(solutionPath) || !ServerPorts.ContainsKey(solutionPath))
-                await CreateOmnisharpServerSubprocess(solutionPath);
+                CreateOmnisharpServerSubprocess(solutionPath);
 
             var para = new Dictionary<string, string>
             {
@@ -78,19 +77,20 @@ namespace Pomelo.NetCore.Node
             para = para.UpdateBy(param);
             var host = "localhost";
             var port = ServerPorts[solutionPath];
+            var url = $"http://{host}:{port}";
             var data = JsonConvert.SerializeObject(para);
             Logger.LogInformation($"data: {data}");
-            var thread = new WorkerThread(port,endpoint, data, timeout);
+            var thread = new WorkerThread(url, endpoint, data, timeout);
             var result = await thread.Run();
             return result;
         }
 
-        public async Task<string> CreateOmnisharpServerSubprocess(string solutionPath)
+        public bool CreateOmnisharpServerSubprocess(string solutionPath)
         {
             if (LauncherProcs.ContainsKey(solutionPath))
             {
                 Logger.LogInformation($"already_bound_solution: {solutionPath}");
-                return null;
+                return true;
             }
 
             Logger.LogInformation($"solution_path: {solutionPath}");
@@ -103,7 +103,9 @@ namespace Pomelo.NetCore.Node
             var proc =  ProcessHelper.Run(Config.OmniSharpPath, fullFileName, args);
             LauncherProcs[solutionPath] = true;
             ServerPorts[solutionPath] = omniPort;
-            return "成功";
+            // 暂停一段时间，避免还没初始化完成就调用OmnisharpServer
+            Thread.Sleep(1000);
+            return true;
         }
 
         public async Task CloseOmnisharpServerSubprocess(string solutionPath)
@@ -115,10 +117,10 @@ namespace Pomelo.NetCore.Node
             ServerPorts.TryRemove(solutionPath, out result2);
         }
 
-        public async Task<string> restart_omnisharp_server_subprocess(string solutionPath)
+        public async Task<bool> restart_omnisharp_server_subprocess(string solutionPath)
         {
             await CloseOmnisharpServerSubprocess(solutionPath);
-            return await CreateOmnisharpServerSubprocess(solutionPath);
+            return CreateOmnisharpServerSubprocess(solutionPath);
         }
     }
 }

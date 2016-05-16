@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Pomelo.NetCore.Node.Common;
 using Pomelo.NetCore.Node.Models;
 
 namespace Pomelo.NetCore.Node.Hubs
@@ -34,10 +33,9 @@ namespace Pomelo.NetCore.Node.Hubs
             return base.OnDisconnected(stopCalled);
         }
 
-        public async Task<object> SignIn(string key)
+        public object SignIn(string key)
         {
-            string secretKey = await FileHelper.ReadFileContent(Config.RootPath);
-            if(!secretKey.Equals(key))
+            if(!Config.SecretKey.Equals(key))
                 throw new AuthenticationException("key错误");
             return new { isSucceeded = true, msg = "验证已通过" };
         }
