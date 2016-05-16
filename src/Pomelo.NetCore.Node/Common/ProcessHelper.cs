@@ -6,15 +6,11 @@ namespace Pomelo.NetCore.Node.Common
     {
         public static Process Run(string workingDirectory, string fullFileName, string args)
         {
-            var proc = new Process
-            {
-                StartInfo =
-                {
-                    WorkingDirectory = workingDirectory,
-                    FileName = fullFileName,
-                    Arguments = args,
-                }
-            };
+            var proc = new Process();
+            proc.StartInfo.WorkingDirectory = workingDirectory;
+            proc.StartInfo.FileName = fullFileName;
+            proc.StartInfo.Arguments = args;
+            proc.StartInfo.UseShellExecute = false;
             proc.Start();
             return proc;
         }

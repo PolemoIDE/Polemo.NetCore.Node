@@ -2,7 +2,8 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -17,40 +18,26 @@ namespace Pomelo.NetCore.Node
         private string Url { get; set; }
         private string Data { get; set; }
         private int Timeout { get; set; }
+        
+        private int port { get; set; }
+        private string endpoint { get; set; }
 
-        public WorkerThread(string url, string data, int timeout)
+        public WorkerThread(int port, string endpoint, string data, int timeout)
         {
-            Url = url;
+            this.port = port;
+            this.endpoint = endpoint;
             Data = data;
             Timeout = timeout;
         }
 
         public async Task<string> Run()
         {
-//            using (HttpClient client = new HttpClient())
-//            {
-//                if (Timeout > 0)
-//                    client.Timeout = new TimeSpan(Timeout);
-//                var response = await client.PostAsync(Url, new StringContent(Data, Encoding.UTF8, "application/json"));
-//                var result = await response.Content.ReadAsStringAsync();
-//                return result;
-//            }
-
-            var httpReq = (HttpWebRequest) WebRequest.Create(Url);
-            httpReq.Method = "POST";
-            httpReq.ContentType = httpReq.Accept = "application/json";
-
-            using (var stream = await httpReq.GetRequestStreamAsync())
-            using (var sw = new StreamWriter(stream))
+            using (var client = new HttpClient())
             {
-                sw.Write(Data);
-            }
-
-            using (var response = await httpReq.GetResponseAsync())
-            using (var stream = response.GetResponseStream())
-            using (var reader = new StreamReader(stream))
-            {
-                return await reader.ReadToEndAsync();
+                client.BaseAddress = new Uri($"http://localhost:{port}");
+                var response = await client.PostAsync(endpoint, new StringContent(Data, Encoding.UTF8, "application/json"));
+                var result = await response.Content.ReadAsStringAsync();
+                return result;
             }
         }
     }
@@ -91,10 +78,9 @@ namespace Pomelo.NetCore.Node
             para = para.UpdateBy(param);
             var host = "localhost";
             var port = ServerPorts[solutionPath];
-            var url = $"http://{host}:{port}{endpoint}";
             var data = JsonConvert.SerializeObject(para);
             Logger.LogInformation($"data: {data}");
-            var thread = new WorkerThread(url, data, timeout);
+            var thread = new WorkerThread(port,endpoint, data, timeout);
             var result = await thread.Run();
             return result;
         }
@@ -110,11 +96,11 @@ namespace Pomelo.NetCore.Node
             Logger.LogInformation($"solution_path: {solutionPath}");
             var omniPort = FreePort.FindNextAvailableTCPPort(2000);
             Logger.LogInformation($"omni_port: {omniPort}");
-            var args = $" -s \"{solutionPath}\" -p {omniPort} --hostPID {Environment.CurrentManagedThreadId}";
+            var args = $" -s \"{solutionPath}\" -p {omniPort} ";
             var fullFileName = Path.Combine(Config.OmniSharpPath, Config.OmniSharpExe);
             Logger.LogInformation($"OmniSharpExePath: {fullFileName}");
             Logger.LogInformation($"args: {args}");
-            ProcessHelper.Run(Config.OmniSharpPath, fullFileName, args);
+            var proc =  ProcessHelper.Run(Config.OmniSharpPath, fullFileName, args);
             LauncherProcs[solutionPath] = true;
             ServerPorts[solutionPath] = omniPort;
             return "成功";
