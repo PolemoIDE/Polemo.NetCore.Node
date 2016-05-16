@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Pomelo.NetCore.Node.Common
 {
@@ -22,6 +23,17 @@ namespace Pomelo.NetCore.Node.Common
         {
             var file = new FileInfo(fileFullName);
             return file.Directory.Name;
+        }
+
+        public static Task<string> ReadFileContent(string fileFullName)
+        {
+            if (string.IsNullOrEmpty(fileFullName))
+                return null;
+
+            using (StreamReader reader = new StreamReader(new FileStream(fileFullName, FileMode.Open, FileAccess.Read)))
+            {
+                return reader.ReadLineAsync();
+            }
         }
     }
 }

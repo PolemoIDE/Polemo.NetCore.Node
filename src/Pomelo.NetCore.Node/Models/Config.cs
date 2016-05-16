@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,6 +51,20 @@ namespace Pomelo.NetCore.Node.Models
             {
                 var path = _configuration["OmniSharpExe"];
                 return string.IsNullOrEmpty(path) ? "OmniSharp.exe" : path;
+            }
+        }
+
+        public string KeyFullName
+        {
+            get
+            {
+                var path = _configuration["KeyFullName"];
+                if (string.IsNullOrEmpty(path))
+                {
+                    var appEnv = _serviceProvider.GetRequiredService<ApplicationEnvironment>();
+                    return Path.Combine(appEnv.ApplicationBasePath, "key.config");
+                }
+                return path;
             }
         }
     }
