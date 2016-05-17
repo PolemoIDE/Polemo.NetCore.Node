@@ -23,7 +23,7 @@ namespace Pomelo.NetCore.Node.Hubs
             }
         }
 
-        public async Task<object> AutoComplete(string projectName, string fileRelativePath, int rowNum, int colNum, string wordToComplete)
+        public async Task<object> AutoComplete(string projectName, string fileRelativePath, int rowNum, int colNum, string wordToComplete, string codeContent)
         {
             try
             {
@@ -34,9 +34,10 @@ namespace Pomelo.NetCore.Node.Hubs
                     {"column", colNum.ToString()},
                     {"filename", fileRelativePath},
                     {"wordToComplete", wordToComplete},
+                    {"buffer", codeContent},
                     {"WantSnippet", "True"},
                     {"WantMethodHeader", "True"},
-                    {"WantReturnType", "True"},
+                    {"WantReturnType", "True"}
                 };
                 string result = await OmniSharp.GetResponse("/autocomplete", solutionPath, para);
                 return new {isSucceeded = true, msg = result};
@@ -48,9 +49,24 @@ namespace Pomelo.NetCore.Node.Hubs
             }
         }
 
-        public Task<object> CodeCheck(string projectName, string fileRelativePath, string codeContent)
+        public async Task<object> CodeCheck(string projectName, string fileRelativePath, string codeContent)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var solutionPath = Path.Combine(Config.RootPath, projectName);
+                var para = new Dictionary<string, string>
+                {
+                    {"filename", fileRelativePath},
+                    {"buffer", codeContent}
+                };
+                string result = await OmniSharp.GetResponse("/codecheck", solutionPath, para);
+                return new { isSucceeded = true, msg = result };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
         }
 
         public Task<object> Highlight(string projectName, string fileRelativePath, string codeContent)
