@@ -35,22 +35,20 @@ namespace Pomelo.NetCore.Node
             {
                 client.BaseAddress = new Uri(Url);
                 var times = 0;
-                begin_post:
-                try
+                while (true)
                 {
-                    var response = await client.PostAsync(endpoint, new StringContent(Data, Encoding.UTF8, "application/json"));
-                    var result = await response.Content.ReadAsStringAsync();
-                    return result;
-                }
-                catch 
-                {
-                    times++;
-                    if (times >= 4)
-                        return "Failed";
-                    else
+                    try
                     {
+                        var response =
+                            await client.PostAsync(endpoint, new StringContent(Data, Encoding.UTF8, "application/json"));
+                        var result = await response.Content.ReadAsStringAsync();
+                        return result;
+                    }
+                    catch(Exception ex)
+                    {
+                        if (times++ > 5)
+                            throw ex;
                         Thread.Sleep(3000);
-                        goto begin_post;
                     }
                 }
             }
@@ -103,28 +101,25 @@ namespace Pomelo.NetCore.Node
 
         public bool CreateOmnisharpServerSubprocess(string solutionPath)
         {
-            lock (this)
+            if (LauncherProcs.ContainsKey(solutionPath))
             {
-                if (LauncherProcs.ContainsKey(solutionPath))
-                {
-                    Logger.LogInformation($"already_bound_solution: {solutionPath}");
-                    return true;
-                }
-                Logger.LogInformation($"solution_path: {solutionPath}");
-                var omniPort = FreePort.FindNextAvailableTCPPort(2000);
-                Logger.LogInformation($"omni_port: {omniPort}");
-                var args = $" -s \"{solutionPath}\" -p {omniPort} ";
-                var fullFileName = Path.Combine(Config.OmniSharpPath, Config.OmniSharpExe);
-                Logger.LogInformation($"OmniSharpExePath: {fullFileName}");
-                Logger.LogInformation($"args: {args}");
-                var proc = ProcessHelper.Run(Config.OmniSharpPath, fullFileName, args);
-                LauncherProcs[solutionPath] = true;
-                ServerPorts[solutionPath] = omniPort;
-                // 暂停一段时间，避免还没初始化完成就调用OmnisharpServer
-                while (omniPort != FreePort.FindNextAvailableTCPPort(omniPort))
-                    Thread.Sleep(100);
+                Logger.LogInformation($"already_bound_solution: {solutionPath}");
                 return true;
             }
+            Logger.LogInformation($"solution_path: {solutionPath}");
+            var omniPort = FreePort.FindNextAvailableTCPPort(2000);
+            Logger.LogInformation($"omni_port: {omniPort}");
+            var args = $" -s \"{solutionPath}\" -p {omniPort} ";
+            var fullFileName = Path.Combine(Config.OmniSharpPath, Config.OmniSharpExe);
+            Logger.LogInformation($"OmniSharpExePath: {fullFileName}");
+            Logger.LogInformation($"args: {args}");
+            var proc = ProcessHelper.Run(Config.OmniSharpPath, fullFileName, args);
+            LauncherProcs[solutionPath] = true;
+            ServerPorts[solutionPath] = omniPort;
+            // 暂停一段时间，避免还没初始化完成就调用OmnisharpServer
+            while (omniPort == FreePort.FindNextAvailableTCPPort(omniPort))
+                Thread.Sleep(100);
+            return true;
         }
 
         public async Task CloseOmnisharpServerSubprocess(string solutionPath)
