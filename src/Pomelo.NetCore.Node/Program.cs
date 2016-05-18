@@ -11,6 +11,7 @@ namespace Pomelo.NetCore.Node
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup>()
+                .UseUrls("http://*:50556")
                 .Build();
 
             host.Run();
