@@ -28,11 +28,12 @@ namespace Pomelo.NetCore.Node.Hubs
             try
             {
                 var solutionPath = Path.Combine(Config.RootPath, projectName);
+                var fileAbsPath = Path.Combine(solutionPath, fileRelativePath);
                 var para = new Dictionary<string, string>
                 {
                     {"line", rowNum.ToString()},
                     {"column", colNum.ToString()},
-                    {"filename", fileRelativePath},
+                    {"filename", fileAbsPath},
                     {"wordToComplete", wordToComplete},
                     {"buffer", codeContent},
                     {"WantSnippet", "True"},
@@ -54,9 +55,10 @@ namespace Pomelo.NetCore.Node.Hubs
             try
             {
                 var solutionPath = Path.Combine(Config.RootPath, projectName);
+                var fileAbsPath = Path.Combine(solutionPath, fileRelativePath);
                 var para = new Dictionary<string, string>
                 {
-                    {"filename", fileRelativePath},
+                    {"filename", fileAbsPath},
                     {"buffer", codeContent}
                 };
                 string result = await OmniSharp.GetResponse("/codecheck", solutionPath, para);
@@ -69,9 +71,25 @@ namespace Pomelo.NetCore.Node.Hubs
             }
         }
 
-        public Task<object> Highlight(string projectName, string fileRelativePath, string codeContent)
+        public async Task<object> Highlight(string projectName, string fileRelativePath, string codeContent)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var solutionPath = Path.Combine(Config.RootPath, projectName);
+                var fileAbsPath = Path.Combine(solutionPath, fileRelativePath);
+                var para = new Dictionary<string, string>
+                {
+                    {"filename", fileAbsPath},
+                    {"buffer", codeContent}
+                };
+                string result = await OmniSharp.GetResponse("/highlight", solutionPath, para);
+                return new { isSucceeded = true, msg = result };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
         }
     }
 }

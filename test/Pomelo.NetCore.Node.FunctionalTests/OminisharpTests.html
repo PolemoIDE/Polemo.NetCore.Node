@@ -20,7 +20,7 @@
                     
                     
                     nodeHub
-                        .invoke('AutoComplete', 'Pomelo.NetCore.Node\\newtest', 'test.cs', 11, 15, 'st', 'using System;'+
+                        .invoke('AutoComplete', 'Pomelo.NetCore.Node\\newtest', 'test.cs', 0, 0, 'st', 'using System;'+
 'using System.Linq;'+
 'using System.Diagnostics;'+
 ''+
@@ -48,6 +48,31 @@
                         .invoke('codecheck', 'Pomelo.NetCore.Node\\newtest', 'test.cs')
                         .done(function (content) {
                             $("body").append("<div><h3>CodeCheck Test: </h3>"
+                            + "<strong>isSucceeded:</strong> " 
+                            + content.isSucceeded 
+                            + "<br\> <strong>msg:</strong> " 
+                            + $('<div/>').text(content.msg).html() 
+                            + "</div>");
+                        });
+                        
+                        
+                    nodeHub
+                        .invoke('highlight', 'Pomelo.NetCore.Node\\newtest', 'test.cs', 'using System;'+
+'using System.Linq;'+
+'using System.Diagnostics;'+
+''+
+'namespace ConsoleApplication'+
+'{'+
+'    public class Program'+
+'    {'+
+'        public static void Main(string[] args)'+
+'        {'+
+'            st'+
+'        }'+
+'    }'+
+'}')
+                        .done(function (content) {
+                            $("body").append("<div><h3>Highlight Test: </h3>"
                             + "<strong>isSucceeded:</strong> " 
                             + content.isSucceeded 
                             + "<br\> <strong>msg:</strong> " 
