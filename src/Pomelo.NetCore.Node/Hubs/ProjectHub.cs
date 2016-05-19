@@ -59,6 +59,18 @@ namespace Pomelo.NetCore.Node.Hubs
                 return new { isSucceeded = false, msg = ex.ToString() };
             }
 
+            Task.Factory.StartNew(() =>
+            {
+                proc.WaitForExit();
+                ProcessPool.Remove(proc);
+
+                // 推送进程退出消息
+                Clients.Group("process-" + proc.Id).OnOutputDataReceived(proc.OutputSequence++, $"Process has exited with code {proc.ExitCode}.");
+                Clients.Group("process-" + proc.Id).OnProcessExited(proc.ExitCode);
+
+                proc.Dispose();
+            });
+
             ProcessPool.Add(proc);
 
             // 将Caller加入process-id广播组
@@ -95,6 +107,17 @@ namespace Pomelo.NetCore.Node.Hubs
                 return new { isSucceeded = false, msg = ex.ToString() };
             }
 
+            Task.Factory.StartNew(() =>
+            {
+                proc.WaitForExit();
+                ProcessPool.Remove(proc);
+
+                // 推送进程退出消息
+                Clients.Group("process-" + proc.Id).OnOutputDataReceived(proc.OutputSequence++, $"Process has exited with code {proc.ExitCode}.");
+                Clients.Group("process-" + proc.Id).OnProcessExited(proc.ExitCode);
+
+                proc.Dispose();
+            });
             ProcessPool.Add(proc);
 
             // 将Caller加入process-id广播组
