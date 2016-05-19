@@ -206,5 +206,52 @@ namespace Pomelo.NetCore.Node.Hubs
                 return new { isSucceeded = false, msg = ex.Message };
             }
         }
+
+        public static void CheckFile(FileInfo file, string projectName)
+        {
+            if (file.FullName.Contains("$safeprojectname$"))
+            {
+
+                var newFileName = file.FullName.Replace("$safeprojectname$", projectName);
+                Console.WriteLine("     C: " + newFileName + " <-" + file.FullName);
+                File.Move(file.FullName, newFileName);
+                file = new FileInfo(newFileName);
+
+            }
+            else
+                Console.WriteLine("     F: " + file.FullName);
+
+            var needReplace = false;
+            var content = File.ReadAllText(file.FullName);
+
+            if (content.Contains("$safeprojectname$"))
+                File.WriteAllText(file.FullName, content.Replace("$safeprojectname$", projectName));
+        }
+        public static void ListFiles(FileSystemInfo info, string projectName)
+        {
+            DirectoryInfo dir = info as DirectoryInfo;
+            if (dir.FullName.Contains("$safeprojectname$"))
+            {
+                var newDirctoryName = dir.FullName.Replace("$safeprojectname$", projectName);
+                Directory.Move(dir.FullName, newDirctoryName);
+                dir = new DirectoryInfo(newDirctoryName);
+                Console.WriteLine("C: " + newDirctoryName);
+            }
+            else
+            {
+                Console.WriteLine("D: " + dir.FullName.Replace("/Users/wph95/Hackathon/2016/azura/test/test/", ""));
+            }
+            FileSystemInfo[] files = dir.GetFileSystemInfos();
+            for (int i = 0; i < files.Length; i++)
+            {
+
+                FileInfo file = files[i] as FileInfo;
+                if (file == null)
+                    ListFiles(files[i], projectName);
+                else
+                    CheckFile(file, projectName);
+
+            }
+        }
     }
 }
