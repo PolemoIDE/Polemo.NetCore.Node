@@ -1,10 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Pomelo.NetCore.Node.Models;
 using Pomelo.NetCore.Node.Common;
 
 namespace Pomelo.NetCore.Node.Hubs
@@ -59,9 +61,23 @@ namespace Pomelo.NetCore.Node.Hubs
             return new { isSucceeded = true, pid = proc.Id };
         }
 
-        public Task<object> ConsoleWrite(string sessionId, int sequence, char inputChar)
+        public object ConsoleWrite(int pid, ulong sequence, char inputChar)
         {
-            throw new NotImplementedException();
+            var proc = ProcessPool.SingleOrDefault(x => x.Id == pid);
+
+            if (proc == null)
+                return new { isSucceeded = false, msg = "Proccess not found." };
+
+            if (proc.HasExited)
+                return new { isSucceeded = false, msg = "Proccess has exited." };
+
+            while (sequence != proc.Sequence + 1)
+                Thread.Sleep(100);
+
+            proc.Sequence = sequence;
+            proc.StandardInput.Write(inputChar);
+
+            return new { isSucceeded = true, @char = inputChar, sequence = sequence };
         }
 
         public Task<object> OpenProject(string projectName, string gitUrl, string SSHKey, string gitUserNickName, string gitUserEmail)
