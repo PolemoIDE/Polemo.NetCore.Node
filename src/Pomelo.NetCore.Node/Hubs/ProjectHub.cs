@@ -33,7 +33,41 @@ namespace Pomelo.NetCore.Node.Hubs
             }
         }
 
-        public object RunCommand(string projectName, string args, string projectPath)
+        public object RunBash()
+        {
+            var proc = new Process();
+            try
+            {
+                proc.StartInfo.UseShellExecute = true;
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardInput = true;
+                proc.StartInfo.CreateNoWindow = true;
+                proc.StartInfo.FileName = "bash";
+                proc.OutputDataReceived += (object sender, System.Diagnostics.DataReceivedEventArgs e) =>
+                {
+                    Clients.Group("process-" + ((Process)sender).Id).OnOutputDataReceived(proc.OutputSequence++, e.Data);
+                };
+                proc.ErrorDataReceived += (object sender, System.Diagnostics.DataReceivedEventArgs e) =>
+                {
+                    Clients.Group("process-" + ((Process)sender).Id).OnOutputDataReceived(proc.OutputSequence++, e.Data);
+                };
+                proc.Start();
+            }
+            catch (Exception ex)
+            {
+                return new { isSucceeded = false, msg = ex.ToString() };
+            }
+
+            ProcessPool.Add(proc);
+
+            // 将Caller加入process-id广播组
+            Groups.Add(Context.ConnectionId, "process-" + proc.Id);
+
+            return new { isSucceeded = true, pid = proc.Id };
+        }
+
+        public object RunCommand(string projectName, string args, string projectPath, bool useBash = false)
         {
             var proc = new Process();
             try
