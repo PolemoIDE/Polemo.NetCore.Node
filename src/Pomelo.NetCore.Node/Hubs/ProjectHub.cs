@@ -139,10 +139,13 @@ namespace Pomelo.NetCore.Node.Hubs
             while (sequence != proc.InputSequence + 1)
                 Thread.Sleep(100);
 
-            proc.InputSequence = sequence;
-            proc.StandardInput.Write(inputChar);
-
-            return new { isSucceeded = true, @char = inputChar, sequence = sequence };
+            lock (this)
+            {
+                ++proc.InputSequence;
+                proc.InputSequence = sequence;
+                proc.StandardInput.Write(inputChar);
+                return new { isSucceeded = true, @char = inputChar, sequence = sequence };
+            }
         }
 
         public Task<object> OpenProject(string projectName, string gitUrl, string SSHKey, string gitUserNickName, string gitUserEmail)
