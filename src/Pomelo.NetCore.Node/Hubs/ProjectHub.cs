@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Pomelo.NetCore.Node.Common;
@@ -9,6 +11,8 @@ namespace Pomelo.NetCore.Node.Hubs
 {
     public partial class PomeloHub
     {
+        public static List<Process> ProcessPool = new List<Process>();
+
         public object GetProjectInfo(string projectName)
         {
             try
@@ -17,10 +21,8 @@ namespace Pomelo.NetCore.Node.Hubs
                 if (!Directory.Exists(path))
                     return new {isSucceeded = false, msg = $"项目\"{projectName}\"不存在"};
 
-                var title = Dotnet.GetProjectInfo(path);
-                if (title == null)
-                    return new {isSucceeded = false, msg = "没有找到title"};
-                return JsonConvert.SerializeObject(title);
+                var info = Dotnet.GetProjectInfo(path);
+                return new { isSucceeded = true, projects = info };
             }
             catch (Exception ex)
             {
@@ -220,8 +222,7 @@ namespace Pomelo.NetCore.Node.Hubs
             }
             else
                 Console.WriteLine("     F: " + file.FullName);
-
-            var needReplace = false;
+            
             var content = File.ReadAllText(file.FullName);
 
             if (content.Contains("$safeprojectname$"))

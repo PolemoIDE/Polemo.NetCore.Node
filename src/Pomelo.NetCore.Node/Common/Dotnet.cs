@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 using Pomelo.NetCore.Node.Models;
 
@@ -12,23 +14,23 @@ namespace Pomelo.NetCore.Node.Common
             throw new NotImplementedException();
         }
 
-        public static ProjectInfo GetProjectInfo(string projectPath)
+        public static List<ProjectInfo> GetProjectInfo(string projectPath)
         {
-            var commandInfos = new ProjectInfo();
+            var ret = new List<ProjectInfo>();
             foreach (var file in FileHelper.SearchAllFiles(projectPath, "project.json"))
             {
-                var command = new Command();
+                var info = new ProjectInfo();
                 var fileDirectoryName = FileHelper.GetFileDirectoryName(file);
                 var filePath = FileHelper.GetFileRelativeDirectory(projectPath, file);
-                command.Path = filePath;
+                info.Path = filePath;
                 var content = File.ReadAllText(file);
                 var root = JObject.Parse(content);
                 var titleProp = root.Property("title");
                 string title = titleProp != null ? titleProp.Value.ToString() : fileDirectoryName;
-                command.Title = title;
-                commandInfos.Commands.Add(command);
+                info.Title = title;
+                ret.Add(info);
             }
-            return commandInfos;
+            return ret;
         }
     }
 }
