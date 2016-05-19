@@ -31,9 +31,32 @@ namespace Pomelo.NetCore.Node.Hubs
             }
         }
 
-        public Task<object> RunCommand(string projectName, string cmd, string projectPath)
+        public object RunCommand(string projectName, string args, string projectPath)
         {
-            throw new NotImplementedException();
+            var proc = new Process();
+            try
+            {
+                proc.StartInfo.UseShellExecute = true;
+                proc.StartInfo.RedirectStandardError = true;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardInput = true;
+                proc.StartInfo.CreateNoWindow = true;
+                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName, projectPath);
+                proc.StartInfo.FileName = "dotnet";
+                proc.StartInfo.Arguments = "run " + args;
+                proc.Start();
+            }
+            catch (Exception ex)
+            {
+                return new { isSucceeded = false, msg = ex.ToString() };
+            }
+
+            ProcessPool.Add(proc);
+
+            // 将Caller加入process-id广播组
+            Groups.Add(Context.ConnectionId, "process-" + proc.Id);
+
+            return new { isSucceeded = true, pid = proc.Id };
         }
 
         public Task<object> ConsoleWrite(string sessionId, int sequence, char inputChar)
