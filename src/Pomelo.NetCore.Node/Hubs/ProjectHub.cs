@@ -46,6 +46,14 @@ namespace Pomelo.NetCore.Node.Hubs
                 proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName, projectPath);
                 proc.StartInfo.FileName = "dotnet";
                 proc.StartInfo.Arguments = "run " + args;
+                proc.OutputDataReceived += (object sender, System.Diagnostics.DataReceivedEventArgs e) =>
+                {
+                    Clients.Group("process-" + ((Process)sender).Id).OnOutputDataReceived(proc.OutputSequence++, e.Data);
+                };
+                proc.ErrorDataReceived += (object sender, System.Diagnostics.DataReceivedEventArgs e) =>
+                {
+                    Clients.Group("process-" + ((Process)sender).Id).OnOutputDataReceived(proc.OutputSequence++, e.Data);
+                };
                 proc.Start();
             }
             catch (Exception ex)
@@ -71,10 +79,10 @@ namespace Pomelo.NetCore.Node.Hubs
             if (proc.HasExited)
                 return new { isSucceeded = false, msg = "Proccess has exited." };
 
-            while (sequence != proc.Sequence + 1)
+            while (sequence != proc.InputSequence + 1)
                 Thread.Sleep(100);
 
-            proc.Sequence = sequence;
+            proc.InputSequence = sequence;
             proc.StandardInput.Write(inputChar);
 
             return new { isSucceeded = true, @char = inputChar, sequence = sequence };
