@@ -213,8 +213,10 @@ namespace Pomelo.NetCore.Node.Hubs
                     return new { isSucceeded = false, msg = error};
                 Process.Start("git --no-pager config  --global --add user.name" + gitUserNickName);
                 Process.Start("git --no-pager config  --global --add user.email" + gitUserEmail);
-                return new { isSucceeded = true, msg = "Success OpenProject"};
+                return new { isSucceeded = true, msg = "Success Clone and open Project"};
             }
+            else
+                return new { isSucceeded = true, msg = "Success OpenProject"};
         }
 
         public async Task<object> ReadFile(string projectName, string fileRelativePath)
