@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.IO.Compression;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Pomelo.NetCore.Node.Models;
@@ -147,7 +148,7 @@ namespace Pomelo.NetCore.Node.Hubs
                 return new { isSucceeded = true, @char = inputChar, sequence = sequence };
             }
         }
-        public object CreateProject(string projectName, string projectType)
+        public async Task<object> CreateProject(string projectName, string projectType)
         {
             string url = "";
             string dest = Path.Combine(Config.RootPath, projectName);
@@ -196,7 +197,7 @@ namespace Pomelo.NetCore.Node.Hubs
             ListFiles(new DirectoryInfo(dest), projectName);
             return new { isSucceeded = true, msg = "Success Create Project:" + projectName + " Type:" + projectType}; 
         }
-        public Task<object> OpenProject(string projectName, string gitUrl, string gitUserNickName, string gitUserPassword, string gitUserEmail)
+        public object OpenProject(string projectName, string gitUrl, string gitUserNickName, string gitUserPassword, string gitUserEmail)
         {
             string path = Path.Combine(Config.RootPath, projectName);
             var directory = new DirectoryInfo(path);
