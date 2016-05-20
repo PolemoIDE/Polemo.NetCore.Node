@@ -1,6 +1,6 @@
 ﻿{
-  "RootPath": "~/pomelo",
+  "RootPath": "C:\\Users\\1\\Documents\\GitHub",
   "SecretKey": "secretKey",
-  "OmniSharpPath": "D:\\Temp\\omnisharp-win-x64-netcoreapp1.0",
+  "OmniSharpPath": "C:\\Users\\1\\Documents\\OmniSharp",
   "OmniSharpExe": "OmniSharp.exe"
 }
