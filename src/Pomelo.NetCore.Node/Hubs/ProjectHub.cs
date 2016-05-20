@@ -449,10 +449,10 @@ namespace Pomelo.NetCore.Node.Hubs
                 if (file == null)
                     results.Add(DirTree(files[i]));
                 else
-                    results.Add(file.FullName);
+                    results.Add(file.Name);
             }
             string path = dir.FullName;
-            return new { path = results};
+            return new { files = results, dirName = dir.Name};
         }
         
         
