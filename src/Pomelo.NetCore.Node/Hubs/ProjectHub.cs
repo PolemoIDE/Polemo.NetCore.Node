@@ -21,7 +21,7 @@ namespace Pomelo.NetCore.Node.Hubs
             {
                 string path = Path.Combine(Config.RootPath, projectName);
                 if (!Directory.Exists(path))
-                    return new {isSucceeded = false, msg = $"项目\"{projectName}\"不存在"};
+                    return new { isSucceeded = false, msg = $"项目\"{projectName}\"不存在" };
 
                 var info = Dotnet.GetProjectInfo(path);
                 return new { isSucceeded = true, projects = info };
@@ -138,7 +138,7 @@ namespace Pomelo.NetCore.Node.Hubs
 
             while (sequence != proc.InputSequence + 1)
                 Thread.Sleep(100);
-            
+
             lock (this)
             {
                 proc.InputSequence = sequence;
@@ -147,25 +147,27 @@ namespace Pomelo.NetCore.Node.Hubs
             }
         }
 
-        public Task<object> OpenProject(string projectName, string gitUrl, string gitUserNickName, string gitUserPassword, string gitUserEmail)
+        public object OpenProject(string projectName, string gitUrl, string gitUserNickName, string gitUserPassword, string gitUserEmail)
         {
             string path = Path.Combine(Config.RootPath, projectName);
             var directory = new DirectoryInfo(path);
-            if (!directory.Exists){
+            if (!directory.Exists)
+            {
                 if (gitUrl.Contains("https://"))
-                    gitUrl = "https://"+gitUserNickName + ':' + gitUserPassword + '@' + gitUrl.Substring(8, gitUrl.Length - 8);
+                    gitUrl = "https://" + gitUserNickName + ':' + gitUserPassword + '@' + gitUrl.Substring(8, gitUrl.Length - 8);
                 else
-                    gitUrl = "http://"+gitUserNickName + ':' + gitUserPassword + '@' + gitUrl.Substring(7, gitUrl.Length - 7);
-                Process.Start("git --no-pager clone " + gitUrl+ " " + projectName);
-                while (!proc.WaitForExit(500));
+                    gitUrl = "http://" + gitUserNickName + ':' + gitUserPassword + '@' + gitUrl.Substring(7, gitUrl.Length - 7);
+                var proc = Process.Start("git --no-pager clone " + gitUrl + " " + projectName);
+                while (!proc.WaitForExit(500)) ;
                 var output = proc.StandardOutput.ReadToEnd();
-                var error = proc.StandardError.ReadToEnd();                
+                var error = proc.StandardError.ReadToEnd();
                 if (proc.ExitCode != 0)
-                    return new { isSucceeded = false, msg = error};
+                    return new { isSucceeded = false, msg = error };
                 Process.Start("git --no-pager config  --global --add user.name" + gitUserNickName);
                 Process.Start("git --no-pager config  --global --add user.email" + gitUserEmail);
-                return new { isSucceeded = true};
+                return new { isSucceeded = true };
             }
+            return new { isSucceede = false };
         }
 
         public async Task<object> ReadFile(string projectName, string fileRelativePath)
@@ -180,19 +182,19 @@ namespace Pomelo.NetCore.Node.Hubs
                         using (StreamReader reader = new StreamReader(fileStream))
                         {
                             var text = await reader.ReadToEndAsync();
-                            return new {isSucceeded = true, msg = text};
+                            return new { isSucceeded = true, msg = text };
                         }
                     }
                 }
                 else
                 {
-                    return new {isSucceeded = false, msg = "文件不存在"};
+                    return new { isSucceeded = false, msg = "文件不存在" };
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.StackTrace);
-                return new {isSucceeded = false, msg = ex.Message};
+                return new { isSucceeded = false, msg = ex.Message };
             }
         }
 
@@ -205,7 +207,7 @@ namespace Pomelo.NetCore.Node.Hubs
                 var file = new FileInfo(path);
                 if (file.Exists)
                     isNew = false;
-                
+
                 if (file.Name.Equals("project.json"))
                     hasRestore = true;
 
@@ -220,7 +222,7 @@ namespace Pomelo.NetCore.Node.Hubs
                             string projectPath = Path.Combine(Config.RootPath, projectName);
                             isRestored = Dotnet.Restore(projectPath);
                         }
-                        return new { isSucceeded = true, isNew = isNew, hasRestore = hasRestore, isRestored = isRestored};
+                        return new { isSucceeded = true, isNew = isNew, hasRestore = hasRestore, isRestored = isRestored };
                     }
                 }
             }
@@ -240,14 +242,14 @@ namespace Pomelo.NetCore.Node.Hubs
                 if (file.Exists)
                 {
                     file.Delete();
-                    return new {isSucceeded = true, msg = "删除成功"};
+                    return new { isSucceeded = true, msg = "删除成功" };
                 }
-                return new {isSucceeded = true, msg = "文件不存在"};
+                return new { isSucceeded = true, msg = "文件不存在" };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.StackTrace);
-                return new {isSucceeded = false, msg = ex.Message};
+                return new { isSucceeded = false, msg = ex.Message };
             }
         }
 
@@ -297,10 +299,10 @@ namespace Pomelo.NetCore.Node.Hubs
             {
                 string oldFilePath = Path.Combine(Config.RootPath, projectName, fileDirectory, oldFileName);
                 string newFilePath = Path.Combine(Config.RootPath, projectName, fileDirectory, newFileName);
-                if(!File.Exists(oldFilePath))
+                if (!File.Exists(oldFilePath))
                     return new { isSucceeded = false, msg = "源文件不存在" };
                 if (File.Exists(newFilePath))
-                    return new {isSucceeded = false, msg = "目标文件已存在"};
+                    return new { isSucceeded = false, msg = "目标文件已存在" };
                 File.Move(oldFilePath, newFilePath);
                 return new { isSucceeded = true, msg = "重命名成功" };
             }
@@ -344,7 +346,7 @@ namespace Pomelo.NetCore.Node.Hubs
             }
             else
                 Console.WriteLine("     F: " + file.FullName);
-            
+
             var content = File.ReadAllText(file.FullName);
 
             if (content.Contains("$safeprojectname$"))
