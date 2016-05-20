@@ -8,7 +8,7 @@ namespace Pomelo.NetCore.Node.Hubs
 {
     public partial class PomeloHub
     {
-        public object StartOminisharp(string projectName)
+        public object StartOmnisharp(string projectName)
         {
             try
             {
