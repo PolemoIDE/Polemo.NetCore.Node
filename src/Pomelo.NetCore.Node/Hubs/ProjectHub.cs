@@ -194,7 +194,7 @@ namespace Pomelo.NetCore.Node.Hubs
             }
             File.Delete(tmpFile);
             ListFiles(new DirectoryInfo(dest), projectName);
-            
+            return new { isSucceeded = true, msg = "Success Create Project:" + projectName + " Type:" + projectType}; 
         }
         public Task<object> OpenProject(string projectName, string gitUrl, string gitUserNickName, string gitUserPassword, string gitUserEmail)
         {
