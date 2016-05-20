@@ -14,7 +14,7 @@ namespace Pomelo.NetCore.Node.Hubs
             {
                 var solutionPath = Path.Combine(Config.RootPath, projectName);
                 var result = OmniSharp.CreateOmnisharpServerSubprocess(solutionPath);
-                return new {isSucceeded = true, msg = result ? "启动成功" : "启动失败" };
+                return new { isSucceeded = true, msg = result ? "启动成功" : "启动失败" };
             }
             catch (Exception ex)
             {
