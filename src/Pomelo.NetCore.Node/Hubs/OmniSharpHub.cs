@@ -27,6 +27,7 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try
             {
+                codeContent = codeContent.Replace("\n", "\r\n");
                 var solutionPath = Path.Combine(Config.RootPath, projectName);
                 var fileAbsPath = Path.Combine(solutionPath, fileRelativePath);
                 var para = new Dictionary<string, string>
@@ -54,6 +55,7 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try
             {
+                codeContent = codeContent.Replace("\n", "\r\n");
                 var solutionPath = Path.Combine(Config.RootPath, projectName);
                 var fileAbsPath = Path.Combine(solutionPath, fileRelativePath);
                 var para = new Dictionary<string, string>
@@ -75,6 +77,7 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try
             {
+                codeContent = codeContent.Replace("\n", "\r\n");
                 var solutionPath = Path.Combine(Config.RootPath, projectName);
                 var fileAbsPath = Path.Combine(solutionPath, fileRelativePath);
                 var para = new Dictionary<string, string>
