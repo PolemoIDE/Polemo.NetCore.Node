@@ -147,9 +147,25 @@ namespace Pomelo.NetCore.Node.Hubs
             }
         }
 
-        public Task<object> OpenProject(string projectName, string gitUrl, string SSHKey, string gitUserNickName, string gitUserEmail)
+        public Task<object> OpenProject(string projectName, string gitUrl, string gitUserNickName, string gitUserPassword, string gitUserEmail)
         {
-            throw new NotImplementedException();
+            string path = Path.Combine(Config.RootPath, projectName);
+            var directory = new DirectoryInfo(path);
+            if (!directory.Exists){
+                if (gitUrl.Contains("https://"))
+                    gitUrl = "https://"+gitUserNickName + ':' + gitUserPassword + '@' + gitUrl.Substring(8, gitUrl.Length - 8);
+                else
+                    gitUrl = "http://"+gitUserNickName + ':' + gitUserPassword + '@' + gitUrl.Substring(7, gitUrl.Length - 7);
+                Process.Start("git --no-pager clone " + gitUrl+ " " + projectName);
+                while (!proc.WaitForExit(500));
+                var output = proc.StandardOutput.ReadToEnd();
+                var error = proc.StandardError.ReadToEnd();                
+                if (proc.ExitCode != 0)
+                    return new { isSucceeded = false, msg = error};
+                Process.Start("git --no-pager config  --global --add user.name" + gitUserNickName);
+                Process.Start("git --no-pager config  --global --add user.email" + gitUserEmail);
+                return new { isSucceeded = true};
+            }
         }
 
         public async Task<object> ReadFile(string projectName, string fileRelativePath)

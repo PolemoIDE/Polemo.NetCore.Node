@@ -18,7 +18,7 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             _logger = loggerFactory.CreateLogger<PomeloHub>();
             Config = new Config(serviceProvider, configuration);
-            OmniSharp = new OmniSharp(serviceProvider, configuration, loggerFactory);
+            OmniSharp = new OmniSharp(serviceProvider, configuration, loggerFactory);    
         }
 
         public override Task OnConnected()
