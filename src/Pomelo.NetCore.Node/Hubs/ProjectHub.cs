@@ -303,13 +303,12 @@ namespace Pomelo.NetCore.Node.Hubs
             }
         }
         
-        public object ListFiles(string projectName, string baseDirectory)
+        public object ListFolder(string projectName, string baseDirectory)
         {
             try 
             {
                 string path = Path.Combine(Config.RootPath, projectName, baseDirectory);
-                string[] folders = Directory.GetDirectories(path,"*", SearchOption.AllDirectories);
-                return new { isSucceeded = true, msg = folders };
+                return new { isSucceeded = true, msg = DirTree(new DirectoryInfo(path)) };
             }
             catch (Exception ex)
             {
@@ -438,7 +437,23 @@ namespace Pomelo.NetCore.Node.Hubs
 
             }
         }
-        
+        public object DirTree(FileSystemInfo info)
+        {
+            List<object> results = new List<object>(); ;
+            DirectoryInfo dir = info as DirectoryInfo;
+            FileSystemInfo[] files = dir.GetFileSystemInfos();
+            for (int i = 0; i < files.Length; i++)
+            {
+
+                FileInfo file = files[i] as FileInfo;
+                if (file == null)
+                    results.Add(DirTree(files[i]));
+                else
+                    results.Add(file.FullName);
+            }
+            string path = dir.FullName;
+            return new { path = results};
+        }
         
         
     }
