@@ -308,7 +308,7 @@ namespace Pomelo.NetCore.Node.Hubs
             try 
             {
                 string path = Path.Combine(Config.RootPath, projectName, baseDirectory);
-                return new { isSucceeded = true, msg = DirTree(new DirectoryInfo(path)) };
+                return new { isSucceeded = true, msg = DirTree(new DirectoryInfo(path), path) };
             }
             catch (Exception ex)
             {
@@ -437,7 +437,7 @@ namespace Pomelo.NetCore.Node.Hubs
 
             }
         }
-        public object DirTree(FileSystemInfo info)
+        public object DirTree(FileSystemInfo info, string dirPath)
         {
             List<object> results = new List<object>(); ;
             DirectoryInfo dir = info as DirectoryInfo;
@@ -447,9 +447,9 @@ namespace Pomelo.NetCore.Node.Hubs
 
                 FileInfo file = files[i] as FileInfo;
                 if (file == null)
-                    results.Add(DirTree(files[i]));
+                    results.Add(DirTree(files[i], dirPath));
                 else
-                    results.Add(file.Name);
+                    results.Add(new { name=file.Name , path=file.FullName.Replace(dirPath, "")});
             }
             string path = dir.FullName;
             return new { files = results, dirName = dir.Name};
