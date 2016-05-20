@@ -1,5 +1,5 @@
 ﻿{
-  "RootPath": "D:\\Pomelo",
+  "RootPath": "~/pomelo",
   "SecretKey": "secretKey",
   "OmniSharpPath": "D:\\Temp\\omnisharp-win-x64-netcoreapp1.0",
   "OmniSharpExe": "OmniSharp.exe"

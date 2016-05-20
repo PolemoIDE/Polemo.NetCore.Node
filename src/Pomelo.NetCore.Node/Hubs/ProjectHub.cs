@@ -149,28 +149,51 @@ namespace Pomelo.NetCore.Node.Hubs
         }
         public object CreateProject(string projectName, string projectType)
         {
+            string url = "";
+            string dest = Path.Combine(Config.RootPath, projectName);
             switch (projectType)
             {
                 case "ConsoleApp":
-                    Console.WriteLine("Case 1");
+                    url = "https://github.com/PomeloIDE/Pomelo.NetCore.Template/archive/console-app.zip";
                     break;
-                case 2:
-                    Console.WriteLine("Case 2");
+                case "WebApplicationEmpty:":
+                    url = "https://github.com/PomeloIDE/Pomelo.NetCore.Template/archive/web-application-empty.zip";
                     break;
-                case 2:
-                    Console.WriteLine("Case 2");
+                case "WebApplicationMvc":
+                    url = "https://github.com/PomeloIDE/Pomelo.NetCore.Template/archive/web-application-mvc.zip";
                     break;
                 default:
-                    Console.WriteLine("Default case");
+                    url = "";
                     break;
+            }
+            if (String.IsNullOrEmpty(url)){
+                return new { isSucceeded = false, msg = "projectType Not Found"};
             }
             var tmpFile = Path.GetTempPath() + "codecomb_" + Guid.NewGuid().ToString() + ".zip";
             using (var webClient = new HttpClient() { Timeout = new TimeSpan(1, 0, 0), MaxResponseContentBufferSize = 1024 * 1024 * 50 })
             {
-                var bytes = await webClient.GetByteArrayAsync(uri);
+                var bytes = await webClient.GetByteArrayAsync(url);
                 File.WriteAllBytes(tmpFile, bytes);
                 Console.WriteLine("Downloaded");
             }
+            using (var fileStream = new FileStream(tmpFile, FileMode.Open))
+            using (var archive = new ZipArchive(fileStream))
+            {
+                foreach (var x in archive.Entries)
+                {
+                    if (!Directory.Exists(Path.GetDirectoryName(dest + x.FullName)))
+                        Directory.CreateDirectory(Path.GetDirectoryName(dest + x.FullName));
+                    if (x.Length == 0 && string.IsNullOrEmpty(Path.GetExtension(x.FullName)))
+                        continue;
+                    using (var entryStream = x.Open())
+                    using (var destStream = File.OpenWrite(dest + x.FullName))
+                    {
+                        entryStream.CopyTo(destStream);
+                    }
+                }
+            }
+            File.Delete(tmpFile);
+            ListFiles(new DirectoryInfo(dest), projectName);
             
         }
         public Task<object> OpenProject(string projectName, string gitUrl, string gitUserNickName, string gitUserPassword, string gitUserEmail)
@@ -182,7 +205,7 @@ namespace Pomelo.NetCore.Node.Hubs
                     gitUrl = "https://"+gitUserNickName + ':' + gitUserPassword + '@' + gitUrl.Substring(8, gitUrl.Length - 8);
                 else
                     gitUrl = "http://"+gitUserNickName + ':' + gitUserPassword + '@' + gitUrl.Substring(7, gitUrl.Length - 7);
-                Process.Start("git --no-pager clone " + gitUrl+ " " + projectName);
+                var proc = Process.Start("git --no-pager clone " + gitUrl+ " " + projectName);
                 while (!proc.WaitForExit(500));
                 var output = proc.StandardOutput.ReadToEnd();
                 var error = proc.StandardError.ReadToEnd();                
@@ -384,11 +407,6 @@ namespace Pomelo.NetCore.Node.Hubs
                 var newDirctoryName = dir.FullName.Replace("$safeprojectname$", projectName);
                 Directory.Move(dir.FullName, newDirctoryName);
                 dir = new DirectoryInfo(newDirctoryName);
-                Console.WriteLine("C: " + newDirctoryName);
-            }
-            else
-            {
-                Console.WriteLine("D: " + dir.FullName.Replace("/Users/wph95/Hackathon/2016/azura/test/test/", ""));
             }
             FileSystemInfo[] files = dir.GetFileSystemInfos();
             for (int i = 0; i < files.Length; i++)
