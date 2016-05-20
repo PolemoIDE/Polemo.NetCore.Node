@@ -19,10 +19,6 @@ namespace Pomelo.NetCore.Node.Common
         {
             int port = startPort;
             bool isAvailable = true;
-
-            var mutex = new Mutex(false,
-                string.Concat("Global/", PortReleaseGuid));
-            mutex.WaitOne();
             try
             {
                 IPGlobalProperties ipGlobalProperties =
@@ -54,7 +50,6 @@ namespace Pomelo.NetCore.Node.Common
             }
             finally
             {
-                mutex.ReleaseMutex();
             }
         }
 
