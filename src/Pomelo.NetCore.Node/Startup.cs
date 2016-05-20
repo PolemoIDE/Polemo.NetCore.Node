@@ -29,6 +29,7 @@ namespace Pomelo.NetCore.Node
         {
             loggerFactory.AddConsole(minLevel: LogLevel.Debug);
             app.UseCors("Pomelo");
+            app.UseWebSockets();
             app.UseSignalR();
         }
     }
