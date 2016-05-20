@@ -307,22 +307,17 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try 
             {
-                string path = Path.Combine(Config.RootPath, projectName, baseDirectory, directoryName);
-                string[] folders = System.IO.Directory.GetDirectories(path,"*", System.IO.SearchOption.AllDirectories);
-                return new {isSucceeded = true, msg=folders}
+                string path = Path.Combine(Config.RootPath, projectName, baseDirectory);
+                string[] folders = Directory.GetDirectories(path,"*", SearchOption.AllDirectories);
+                return new { isSucceeded = true, msg = folders };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.StackTrace);
                 return new { isSucceeded = false, msg = ex.Message };
             }
-            
-            
         }
         
-        
-        
-
         public object CreateFolder(string projectName, string baseDirectory, string directoryName)
         {
             try
