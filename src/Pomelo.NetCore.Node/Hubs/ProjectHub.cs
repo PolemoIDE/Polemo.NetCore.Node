@@ -248,7 +248,7 @@ namespace Pomelo.NetCore.Node.Hubs
             }
         }
 
-        public async Task<object> WriteFile(string projectName, string fileRelativePath, string fileContent)
+        public object WriteFile(string projectName, string fileRelativePath, string fileContent)
         {
             try
             {
@@ -261,20 +261,14 @@ namespace Pomelo.NetCore.Node.Hubs
                 if (file.Name.Equals("project.json"))
                     hasRestore = true;
 
-                using (FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
+                File.WriteAllText(path, fileContent);
+                bool isRestored = true;
+                if (hasRestore)
                 {
-                    using (StreamWriter writer = new StreamWriter(fileStream))
-                    {
-                        await writer.WriteAsync(fileContent);
-                        bool isRestored = true;
-                        if (hasRestore)
-                        {
-                            string projectPath = Path.Combine(Config.RootPath, projectName);
-                            isRestored = Dotnet.Restore(projectPath);
-                        }
-                        return new { isSucceeded = true, isNew = isNew, hasRestore = hasRestore, isRestored = isRestored};
-                    }
+                    string projectPath = Path.Combine(Config.RootPath, projectName);
+                    isRestored = Dotnet.Restore(projectPath);
                 }
+                return new { isSucceeded = true, isNew = isNew, hasRestore = hasRestore, isRestored = isRestored };
             }
             catch (Exception ex)
             {
