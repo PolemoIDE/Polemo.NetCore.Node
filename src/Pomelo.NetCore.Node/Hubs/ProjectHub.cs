@@ -443,7 +443,12 @@ namespace Pomelo.NetCore.Node.Hubs
                 if (file == null)
                     results.Add(DirTree(files[i], dirPath));
                 else
-                    results.Add(new { name=file.Name , path=file.FullName.Replace(dirPath + "/", "")});
+                {
+                    if (CodeComb.Package.OS.Current == CodeComb.Package.OSType.Windows)
+                        results.Add(new { name = file.Name, path = file.FullName.Replace(dirPath + "\\", "") });
+                    else
+                        results.Add(new { name = file.Name, path = file.FullName.Replace(dirPath + "/", "") });
+                }
             }
             string path = dir.FullName;
             return new { files = results, dirName = dir.Name};
