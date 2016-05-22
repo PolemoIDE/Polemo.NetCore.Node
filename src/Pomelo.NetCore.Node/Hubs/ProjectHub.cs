@@ -277,6 +277,35 @@ namespace Pomelo.NetCore.Node.Hubs
             }
         }
 
+        public object CreateFile(string projectName, string folder, string name)
+        {
+            try
+            {
+                bool isNew = true, hasRestore = false;
+                string path = Path.Combine(Config.RootPath, projectName, folder, name);
+                var file = new FileInfo(path);
+                if (file.Exists)
+                    isNew = false;
+
+                if (file.Name.Equals("project.json"))
+                    hasRestore = true;
+
+                File.WriteAllText(path, "");
+                bool isRestored = true;
+                if (hasRestore)
+                {
+                    string projectPath = Path.Combine(Config.RootPath, projectName);
+                    isRestored = Dotnet.Restore(projectPath);
+                }
+                return new { isSucceeded = true, isNew = isNew, hasRestore = hasRestore, isRestored = isRestored };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return new { isSucceeded = false, msg = ex.Message };
+            }
+        }
+
         public object RemoveFile(string projectName, string fileRelativePath)
         {
             try
