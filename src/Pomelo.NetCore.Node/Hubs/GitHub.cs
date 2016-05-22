@@ -340,7 +340,7 @@ namespace Pomelo.NetCore.Node.Hubs
                 var proc = new Process();
                 proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
                 proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "push" + " " + repository + " " + refspec;
+                proc.StartInfo.Arguments = "push" + " " + repository + " " + refspec ?? "";
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardInput = true;
