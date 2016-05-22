@@ -320,7 +320,12 @@ namespace Pomelo.NetCore.Node.Hubs
                 if (!directory.Exists)
                 {
                     directory.Create();
-                    return new { isSucceeded = true, msg = "创建成功" };
+                    var folder = directory.FullName;
+                    if (CodeComb.Package.OS.Current == CodeComb.Package.OSType.Windows)
+                        folder = folder.Replace(Path.Combine(Config.RootPath, projectName) + "\\", "");
+                    else
+                        folder = folder.Replace(Path.Combine(Config.RootPath, projectName) + "/", "");
+                    return new { isSucceeded = true, msg = "创建成功", path = folder };
                 }
                 return new { isSucceeded = true, msg = "文件夹已存在" };
             }
