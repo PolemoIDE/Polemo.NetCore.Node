@@ -148,7 +148,7 @@ namespace Pomelo.NetCore.Node.Common
                     {
                         fileDiff.LineDiffs.Add(new FileDiff.LineDiff
                         {
-                            Line = @"<img src=""../../assets/images/no-new-line.png"" class=""no-new-line"" />",
+                            Line = @"<svg aria-hidden=""true"" class=""octicon octicon-no-newline"" height=""16"" version=""1.1"" viewBox=""0 0 16 16"" width=""16""><path d=""M16 5v3c0 0.55-0.45 1-1 1H12v2L9 8l3-3v2h2V5h2zM8 8c0 2.2-1.8 4-4 4S0 10.2 0 8s1.8-4 4-4 4 1.8 4 4zM1.5 9.66l4.16-4.16c-0.48-0.31-1.05-0.5-1.66-0.5-1.66 0-3 1.34-3 3 0 0.61 0.19 1.17 0.5 1.66z m5.5-1.66c0-0.61-0.19-1.17-0.5-1.66L2.34 10.5c0.48 0.31 1.05 0.5 1.66 0.5 1.66 0 3-1.34 3-3z""></path></svg>",
                             NewLineNumber = 0,
                             OriginalLineNumber = 0,
                             Type = FileDiff.LineDiff.LineDiffType.Info
