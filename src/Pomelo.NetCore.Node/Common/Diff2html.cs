@@ -56,7 +56,11 @@ namespace Pomelo.NetCore.Node.Common
                 }
                 else
                 {
-                    diffsGroupByFile.Last().Add(diffLine);
+                    try
+                    {
+                        diffsGroupByFile.Last().Add(diffLine);
+                    }
+                    catch { }
                 }
 
             }
