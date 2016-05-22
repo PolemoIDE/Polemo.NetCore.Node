@@ -450,8 +450,12 @@ namespace Pomelo.NetCore.Node.Hubs
                         results.Add(new { name = file.Name, path = file.FullName.Replace(dirPath + "/", "") });
                 }
             }
-            string path = dir.FullName;
-            return new { files = results, dirName = new { display= dir.Name, full= dir.FullName } };
+            var path = dir.FullName;
+            if (CodeComb.Package.OS.Current == CodeComb.Package.OSType.Windows)
+                path = path.Replace(dirPath + "\\", "");
+            else
+                path = path.Replace(dirPath + "/", "");
+            return new { files = results, dirName = new { display = dir.Name, full = path } };
         }
     }
 }
