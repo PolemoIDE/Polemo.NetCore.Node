@@ -451,9 +451,7 @@ namespace Pomelo.NetCore.Node.Hubs
                 }
             }
             string path = dir.FullName;
-            return new { files = results, dirName = dir.Name};
+            return new { files = results, dirName = new { display= dir.Name, full= dir.FullName } };
         }
-        
-        
     }
 }
