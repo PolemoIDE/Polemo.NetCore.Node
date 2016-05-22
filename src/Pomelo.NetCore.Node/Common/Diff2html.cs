@@ -148,7 +148,7 @@ namespace Pomelo.NetCore.Node.Common
                     {
                         fileDiff.LineDiffs.Add(new FileDiff.LineDiff
                         {
-                            Line = line.Remove(0, 1),
+                            Line = @"<img src=""../../assets/images/no-new-line.png"" class=""no-new-line"" />",
                             NewLineNumber = 0,
                             OriginalLineNumber = 0,
                             Type = FileDiff.LineDiff.LineDiffType.Info
