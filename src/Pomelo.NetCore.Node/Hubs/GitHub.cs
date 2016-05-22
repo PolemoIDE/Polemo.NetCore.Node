@@ -56,6 +56,11 @@ namespace Pomelo.NetCore.Node.Hubs
             return ret;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <returns></returns>
         public object GetGitLogs(string projectName)
         {
             try
