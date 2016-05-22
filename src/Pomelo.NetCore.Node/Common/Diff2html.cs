@@ -79,8 +79,6 @@ namespace Pomelo.NetCore.Node.Common
                 else
                     fileDiff.Type = FileDiff.FileDiffType.Modification;
 
-                // ignore 2nd, 3rd, 4th line
-
                 // Find first line starts with @@
                 int ln = 0;
                 for (int i = 1; i < diffsGroup.Count; ++i)
@@ -93,7 +91,6 @@ namespace Pomelo.NetCore.Node.Common
                 }
 
                 int oriStart = 0, newStart = 0;
-                // @@ -26,11 +26,25 @@
                 for (; ln < diffsGroup.Count; ++ln)
                 {
                     var line = diffsGroup[ln];
@@ -101,6 +98,7 @@ namespace Pomelo.NetCore.Node.Common
                     if (line.Length == 0)
                         continue;
 
+                    // @@ -26,11 +26,25 @@
                     if (line.StartsWith("@@"))
                     {
                         var segs = line.Split(' ');
