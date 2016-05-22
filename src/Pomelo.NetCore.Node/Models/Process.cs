@@ -10,5 +10,15 @@ namespace Pomelo.NetCore.Node.Models
     {
         public ulong InputSequence { get; set; } = 0;
         public ulong OutputSequence { get; set; } = 0;
+
+        public static Process Start(string file, string args, string path)
+        {
+            var proc = new Process();
+            proc.StartInfo.FileName = file;
+            proc.StartInfo.Arguments = args;
+            proc.StartInfo.WorkingDirectory = path;
+            proc.Start();
+            return proc;
+        }
     }
 }

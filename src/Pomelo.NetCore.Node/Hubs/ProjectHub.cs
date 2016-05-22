@@ -206,20 +206,14 @@ namespace Pomelo.NetCore.Node.Hubs
                     gitUrl = "https://"+gitUserNickName + ':' + gitUserPassword + '@' + gitUrl.Substring(8, gitUrl.Length - 8);
                 else
                     gitUrl = "http://"+gitUserNickName + ':' + gitUserPassword + '@' + gitUrl.Substring(7, gitUrl.Length - 7);
-                var proc = new Process(); //Process.Start("git", " --no-pager clone " + gitUrl + " " + projectName);
-                proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "--no-pager clone " + gitUrl + " " + projectName;
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.RedirectStandardInput = true;
-                proc.Start();
-                proc.StandardInput.WriteLine(gitUserEmail);
-                proc.StandardInput.WriteLine(gitUserPassword);
+                Console.Error.WriteLine(gitUrl);
+                var proc = Process.Start("git", " --no-pager clone " + gitUrl + " " + projectName, Config.RootPath);
                 proc.WaitForExit();          
                 if (proc.ExitCode != 0)
                     return new { isSucceeded = false, msg = "Git has exited with " + proc.ExitCode};
-                var p1 = Process.Start("git"," --no-pager config  --global --add user.name" + gitUserNickName);
+                var p1 = Process.Start("git"," --no-pager config  --global --add user.name" + gitUserNickName, path);
                 p1.WaitForExit();
-                var p2 = Process.Start("git"," --no-pager config  --global --add user.email" + gitUserEmail);
+                var p2 = Process.Start("git"," --no-pager config  --global --add user.email" + gitUserEmail, path);
                 p2.WaitForExit();
                 return new { isSucceeded = true, msg = "Success Clone and open Project"};
             }
