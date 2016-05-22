@@ -95,7 +95,7 @@ namespace Pomelo.NetCore.Node.Hubs
                 proc.Start();
                 var output = proc.StandardOutput.ReadToEnd();
                 var error = proc.StandardError.ReadToEnd();
-                while (!proc.WaitForExit(500));
+                proc.WaitForExit();
                 if (proc.ExitCode != 0)
                     return new { isSucceeded = false, msg = error};
                 return new { isSucceeded = true, msg = output };
@@ -122,7 +122,7 @@ namespace Pomelo.NetCore.Node.Hubs
                 proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
                 proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
                 proc.Start();
-                while (!proc.WaitForExit(500));
+                proc.WaitForExit();
                 var output = proc.StandardOutput.ReadToEnd();
                 var error = proc.StandardError.ReadToEnd();
                 if (proc.ExitCode != 0)
@@ -151,7 +151,7 @@ namespace Pomelo.NetCore.Node.Hubs
                 proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
                 proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
                 proc.Start();
-                while (!proc.WaitForExit(500));
+                proc.WaitForExit();
                 var output = proc.StandardOutput.ReadToEnd();
                 output = output.Replace("\r\n", "\n");
                 var _branches = output.Split('\n'); 
@@ -187,7 +187,7 @@ namespace Pomelo.NetCore.Node.Hubs
                 proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
                 proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
                 proc.Start();
-                while (!proc.WaitForExit(500));
+                proc.WaitForExit();
                 var output = proc.StandardOutput.ReadToEnd();
                 var error = proc.StandardError.ReadToEnd();                
                 if (proc.ExitCode != 0)
@@ -216,7 +216,7 @@ namespace Pomelo.NetCore.Node.Hubs
                 proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
                 proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
                 proc.Start();
-                while (!proc.WaitForExit(500));
+                proc.WaitForExit();
                 var output = proc.StandardOutput.ReadToEnd();
                 var error = proc.StandardError.ReadToEnd();                
                 if (proc.ExitCode != 0)
@@ -245,7 +245,7 @@ namespace Pomelo.NetCore.Node.Hubs
                 proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
                 proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
                 proc.Start();
-                while (!proc.WaitForExit(500));
+                proc.WaitForExit();
                 var output = proc.StandardOutput.ReadToEnd();
                 var error = proc.StandardError.ReadToEnd();                
                 if (proc.ExitCode != 0)
@@ -275,7 +275,7 @@ namespace Pomelo.NetCore.Node.Hubs
                 proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
                 proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
                 proc.Start();
-                while (!proc.WaitForExit(500));
+                proc.WaitForExit();
                 var output = proc.StandardOutput.ReadToEnd();
                 var error = proc.StandardError.ReadToEnd();                
                 if (proc.ExitCode != 0)
@@ -305,7 +305,7 @@ namespace Pomelo.NetCore.Node.Hubs
                 proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
                 proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
                 proc.Start();
-                while (!proc.WaitForExit(500));
+                proc.WaitForExit();
                 var output = proc.StandardOutput.ReadToEnd();
                 var error = proc.StandardError.ReadToEnd();                
                 if (proc.ExitCode != 0)
@@ -334,7 +334,7 @@ namespace Pomelo.NetCore.Node.Hubs
                 proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
                 proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
                 proc.Start();
-                while (!proc.WaitForExit(500));
+                proc.WaitForExit();
                 var output = proc.StandardOutput.ReadToEnd();
                 var error = proc.StandardError.ReadToEnd();                
                 if (proc.ExitCode != 0)
