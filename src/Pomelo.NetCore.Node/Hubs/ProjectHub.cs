@@ -297,7 +297,12 @@ namespace Pomelo.NetCore.Node.Hubs
                     string projectPath = Path.Combine(Config.RootPath, projectName);
                     isRestored = Dotnet.Restore(projectPath);
                 }
-                return new { isSucceeded = true, isNew = isNew, hasRestore = hasRestore, isRestored = isRestored };
+                var p = path;
+                if (CodeComb.Package.OS.Current == CodeComb.Package.OSType.Windows)
+                    p = p.Replace(Path.Combine(Config.RootPath, projectName) + "\\", "");
+                else
+                    p = p.Replace(Path.Combine(Config.RootPath, projectName) + "/", "");
+                return new { isSucceeded = true, path = path, isNew = isNew, hasRestore = hasRestore, isRestored = isRestored };
             }
             catch (Exception ex)
             {
