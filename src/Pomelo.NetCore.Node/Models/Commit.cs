@@ -13,5 +13,6 @@ namespace Pomelo.NetCore.Node.Models
         public long Additions { get; set; }
         public long Deletions { get; set; }
         public long FilesChange { get; set; } 
+        public string Summary { get; set; }
     }
 }

@@ -34,12 +34,13 @@ namespace Pomelo.NetCore.Node.Hubs
                     if (string.IsNullOrWhiteSpace(tmp[i]))
                         continue;
                     var splited = tmp[i].Split(new string[] { "-::-" }, StringSplitOptions.None);
-                    if (splited.Count() == 4)
+                    if (splited.Count() == 5)
                     {
                         commit.Hash = splited[0];
                         commit.Author = splited[1];
                         commit.Email = splited[2];
                         commit.Datetime = Convert.ToInt64(splited[3]);
+                        commit.Summary = splited[4];
                     }
                     else
                     {
@@ -56,6 +57,11 @@ namespace Pomelo.NetCore.Node.Hubs
             return ret;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <returns></returns>
         public object GetGitLogs(string projectName)
         {
             try
@@ -63,7 +69,7 @@ namespace Pomelo.NetCore.Node.Hubs
                 var proc = new Process();
                 proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
                 proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "--no-pager log -20 --numstat --format=--split--%n%H-::-%an-::-%ae-::-%at";
+                proc.StartInfo.Arguments = "--no-pager log -20 --numstat --format=--split--%n%H-::-%an-::-%ae-::-%at-::-%s";
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardInput = true;
