@@ -507,5 +507,14 @@ namespace Pomelo.NetCore.Node.Hubs
                 path = path.Replace(dirPath + "/", "");
             return new { files = results, dirName = new { display = dir.Name, full = path } };
         }
+
+        public object StopProcess(int pid)
+        {
+            var process = ProcessPool.SingleOrDefault(x => x.Id == pid);
+            if (process == null)
+                return new { isSucceeded = true, msg = "Process not found" };
+            process.Kill();
+            return new { isSucceeded = true };
+        }
     }
 }
