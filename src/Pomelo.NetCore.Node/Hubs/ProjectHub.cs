@@ -40,21 +40,18 @@ namespace Pomelo.NetCore.Node.Hubs
             var proc = new Process();
             try
             {
-                proc.StartInfo.UseShellExecute = true;
+                proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardInput = true;
                 proc.StartInfo.CreateNoWindow = true;
-                proc.StartInfo.FileName = "bash";
-                proc.OutputDataReceived += (object sender, System.Diagnostics.DataReceivedEventArgs e) =>
-                {
-                    Clients.Group("process-" + ((Process)sender).Id).OnOutputDataReceived(proc.OutputSequence++, e.Data);
-                };
-                proc.ErrorDataReceived += (object sender, System.Diagnostics.DataReceivedEventArgs e) =>
-                {
-                    Clients.Group("process-" + ((Process)sender).Id).OnOutputDataReceived(proc.OutputSequence++, e.Data);
-                };
+                proc.StartInfo.FileName = CodeComb.Package.OS.Current == CodeComb.Package.OSType.Windows ? "cmd" : "bash";
+                proc.OutputDataReceived += Proc_OutputDataReceived;
+                proc.ErrorDataReceived += Proc_ErrorDataReceived;
                 proc.Start();
+                proc.StandardInput.WriteLine("chcp 65001");
+                proc.BeginErrorReadLine();
+                proc.BeginOutputReadLine();
             }
             catch (Exception ex)
             {
@@ -67,8 +64,8 @@ namespace Pomelo.NetCore.Node.Hubs
                 ProcessPool.Remove(proc);
 
                 // 推送进程退出消息
-                Clients.Group("process-" + proc.Id).OnOutputDataReceived(proc.OutputSequence++, $"Process has exited with code {proc.ExitCode}.");
-                Clients.Group("process-" + proc.Id).OnProcessExited(proc.ExitCode);
+                Clients.Group("process-" + proc.Id).OnOutputDataReceived(proc.Id, proc.OutputSequence++, $"Process has exited with code {proc.ExitCode}.");
+                Clients.Group("process-" + proc.Id).OnProcessExited(proc.Id, proc.ExitCode);
 
                 proc.Dispose();
             });
@@ -81,12 +78,24 @@ namespace Pomelo.NetCore.Node.Hubs
             return new { isSucceeded = true, pid = proc.Id };
         }
 
-        public object RunCommand(string projectName, string args, string projectPath, bool useBash = false)
+        private void Proc_ErrorDataReceived(object sender, System.Diagnostics.DataReceivedEventArgs e)
+        {
+            var content = e.Data;
+            Clients.Group("process-" + ((Process)sender).Id).OnOutputDataReceived(((Process)sender).Id, ((Process)sender).OutputSequence++, e.Data + "\r\n");
+        }
+
+        private void Proc_OutputDataReceived(object sender, System.Diagnostics.DataReceivedEventArgs e)
+        {
+            var content = e.Data;
+            Clients.Group("process-" + ((Process)sender).Id).OnOutputDataReceived(((Process)sender).Id, ((Process)sender).OutputSequence++, e.Data + "\r\n");
+        }
+
+        public object RunCommand(string projectName, string args, string projectPath)
         {
             var proc = new Process();
             try
             {
-                proc.StartInfo.UseShellExecute = true;
+                proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardInput = true;
@@ -94,15 +103,11 @@ namespace Pomelo.NetCore.Node.Hubs
                 proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName, projectPath);
                 proc.StartInfo.FileName = "dotnet";
                 proc.StartInfo.Arguments = "run " + args;
-                proc.OutputDataReceived += (object sender, System.Diagnostics.DataReceivedEventArgs e) =>
-                {
-                    Clients.Group("process-" + ((Process)sender).Id).OnOutputDataReceived(proc.OutputSequence++, e.Data);
-                };
-                proc.ErrorDataReceived += (object sender, System.Diagnostics.DataReceivedEventArgs e) =>
-                {
-                    Clients.Group("process-" + ((Process)sender).Id).OnOutputDataReceived(proc.OutputSequence++, e.Data);
-                };
+                proc.OutputDataReceived += Proc_OutputDataReceived;
+                proc.ErrorDataReceived += Proc_ErrorDataReceived;
                 proc.Start();
+                proc.BeginErrorReadLine();
+                proc.BeginOutputReadLine();
             }
             catch (Exception ex)
             {
@@ -144,7 +149,12 @@ namespace Pomelo.NetCore.Node.Hubs
             lock (this)
             {
                 proc.InputSequence = sequence;
-                proc.StandardInput.Write(inputChar);
+                if (inputChar == 13) {
+                    proc.StandardInput.WriteLine();
+                } else
+                {
+                    proc.StandardInput.Write(inputChar);
+                }
                 return new { isSucceeded = true, @char = inputChar, sequence = sequence };
             }
         }
