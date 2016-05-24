@@ -217,7 +217,7 @@ namespace Pomelo.NetCore.Node.Common
                     builder.Append("  <td>").Append(symbol).AppendLine("</td>");
 
                     builder.AppendLine("  <td>").
-                            Append(line.Line).Append("</td>").AppendLine();
+                            Append(line.Line.Replace(" ", "&nbsp;")).Append("</td>").AppendLine();
 
                     builder.AppendLine("</tr>");
                 }

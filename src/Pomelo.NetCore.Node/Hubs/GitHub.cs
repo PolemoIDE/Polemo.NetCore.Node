@@ -369,14 +369,15 @@ namespace Pomelo.NetCore.Node.Hubs
             }
 
         }
-        public object CreateGitPull(string projectName, string repository, string refspec)
+        public object CreateGitPull(string projectName/*, string repository, string refspec*/)
         {
             try
             {
                 var proc = new Process();
                 proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
                 proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "pull" + " " + repository + " " + refspec;
+                // proc.StartInfo.Arguments = "pull" + " " + repository + " " + refspec;
+                proc.StartInfo.Arguments = "pull";
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardInput = true;

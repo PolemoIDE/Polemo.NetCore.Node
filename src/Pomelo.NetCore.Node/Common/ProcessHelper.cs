@@ -13,7 +13,11 @@ namespace Pomelo.NetCore.Node.Common
                     WorkingDirectory = workingDirectory,
                     FileName = fullFileName,
                     Arguments = args,
-                    UseShellExecute = false
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
                 }
             };
             proc.Start();
