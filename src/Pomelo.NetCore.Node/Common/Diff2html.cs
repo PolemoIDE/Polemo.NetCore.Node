@@ -161,6 +161,11 @@ namespace Pomelo.NetCore.Node.Common
                         continue;
                     }
 
+                    //warning: LF will be replaced by CRLF in
+                    // The file will have its original line endings in your working directory.
+                    if (line.StartsWith("warning:") || line.StartsWith("The file"))
+                        continue;
+
                     fileDiff.LineDiffs.Add(new FileDiff.LineDiff
                     {
                         Line = line.Remove(0, 1),
