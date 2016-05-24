@@ -1,6 +1,6 @@
 ﻿{
-  "RootPath": "/home/ubuntu/ide",
+  "RootPath": "C:\\Users\\1\\Documents\\GitHub",
   "SecretKey": "secretKey",
   "OmniSharpPath": "C:\\Users\\1\\Documents\\OmniSharp",
-  "OmniSharpExe": "OmniSharp.exe"
+  "OmniSharpExe": "OmniSharp"
 }
