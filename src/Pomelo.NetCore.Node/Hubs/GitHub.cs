@@ -91,8 +91,8 @@ namespace Pomelo.NetCore.Node.Hubs
             try
             {
                 var workingDir = Path.Combine(Config.RootPath, projectName);
-                var argument = "--no-pager add " + workingDir;
-                var result = ExecuteGit.Execute(argument, workingDir);
+                var argument = "--no-pager add \"" + workingDir + "\"";
+                var result = ExecuteGit.Execute(workingDir, argument);
                 if (result.ExitCode != 0)
                     return new { isSucceeded = false, msg = result.StdErr };
                     
@@ -132,7 +132,7 @@ namespace Pomelo.NetCore.Node.Hubs
             {
                 var workingDir = Path.Combine(Config.RootPath, projectName);
                 var argument = "--no-pager add " + workingDir;
-                var result = ExecuteGit.Execute(argument, workingDir);
+                var result = ExecuteGit.Execute(workingDir, argument);
                 if (result.ExitCode != 0)
                     return new { isSucceeded = false, msg = result.StdErr };
                 
@@ -256,7 +256,7 @@ namespace Pomelo.NetCore.Node.Hubs
             {
                 var workingDir = Path.Combine(Config.RootPath, projectName);
                 var argument = "--no-pager add";
-                var result = ExecuteGit.Execute(argument, workingDir);
+                var result = ExecuteGit.Execute(workingDir, argument);
                 if (result.ExitCode != 0)
                     return new { isSucceeded = false, msg = result.StdErr };
                     

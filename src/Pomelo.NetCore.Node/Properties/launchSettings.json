@@ -17,10 +17,10 @@
     },
     "Pomelo.NetCore.Node": {
       "commandName": "Project",
-      "launchBrowser": false,
       "launchUrl": "http://0.0.0.0:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "PATH": "C:\\Program Files (x86)\\Git\\bin"
       }
     }
   }
