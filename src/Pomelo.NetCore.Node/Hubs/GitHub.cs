@@ -92,18 +92,18 @@ namespace Pomelo.NetCore.Node.Hubs
             {
                 var workingDir = Path.Combine(Config.RootPath, projectName);
                 var argument = "--no-pager add \"" + workingDir + "\"";
-                var result = ExecuteGit.Execute(workingDir, argument);
-                if (result.ExitCode != 0)
-                    return new { isSucceeded = false, msg = result.StdErr };
+                var fuckresult = ExecuteGit.Execute(workingDir, argument);
+                if (fuckresult.ExitCode != 0)
+                    return new { isSucceeded = false, msg = fuckresult.StdErr };
                     
                 
                 var workingDir2 = Path.Combine(Config.RootPath, projectName);
                 var argument2 = "--no-pager show --pretty=\"\" " + commit;
                 var result2 = ExecuteGit.Execute(workingDir, argument2);
                 if (result2.ExitCode != 0)
-                    return new { isSucceeded = false, msg = result.StdErr };
+                    return new { isSucceeded = false, msg = result2.StdErr };
 
-                var diff = Diff2html.GetDiff(result.StdOut);
+                var diff = Diff2html.GetDiff(result2.StdOut);
                 var html = Diff2html.DiffToHTML(diff);
                 var list = new List<FileDiff>();
                 foreach (var file in html)
@@ -131,19 +131,19 @@ namespace Pomelo.NetCore.Node.Hubs
             try
             {
                 var workingDir = Path.Combine(Config.RootPath, projectName);
-                var argument = "--no-pager add " + workingDir;
-                var result = ExecuteGit.Execute(workingDir, argument);
-                if (result.ExitCode != 0)
-                    return new { isSucceeded = false, msg = result.StdErr };
+                var argument = "--no-pager add -A \"" + workingDir + "\"";
+                var fuckresult = ExecuteGit.Execute(workingDir, argument);
+                if (fuckresult.ExitCode != 0)
+                    return new { isSucceeded = false, msg = fuckresult.StdErr };
                 
                 var workingDir2 = Path.Combine(Config.RootPath, projectName);
                 var argument2 = "--no-pager diff --no-color --cached";
                 var result2 = ExecuteGit.Execute(workingDir, argument2);
 
                 if (result2.ExitCode != 0)
-                    return new { isSucceeded = false, msg = result.StdErr };
+                    return new { isSucceeded = false, msg = result2.StdErr };
 
-                var diff = Diff2html.GetDiff(result.StdOut);
+                var diff = Diff2html.GetDiff(result2.StdOut);
                 var html = Diff2html.DiffToHTML(diff);
                 var list = new List<FileDiff>();
                 foreach (var file in html)
@@ -254,18 +254,19 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try
             {
+                // TUO KU ZI FANG PI?
                 var workingDir = Path.Combine(Config.RootPath, projectName);
-                var argument = "--no-pager add";
-                var result = ExecuteGit.Execute(workingDir, argument);
-                if (result.ExitCode != 0)
-                    return new { isSucceeded = false, msg = result.StdErr };
+                //var argument = "--no-pager add";
+                //var fuckresult = ExecuteGit.Execute(workingDir, argument);
+                //if (fuckresult.ExitCode != 0)
+                //    return new { isSucceeded = false, msg = fuckresult.StdErr };
                     
                 var workingDir2 = Path.Combine(Config.RootPath, projectName);
                 var argument2 = "commit -a -m \"" + title + "\" -m \"" + description + "\"";
                 var result2 = ExecuteGit.Execute(workingDir, argument2);
                 if (result2.ExitCode != 0)
-                    return new { isSucceeded = false, msg = result.StdOut + result.StdErr };
-                return new { isSucceeded = true, msg = result.StdOut };
+                    return new { isSucceeded = false, msg = result2.StdOut + result2.StdErr };
+                return new { isSucceeded = true, msg = result2.StdOut };
             }
             catch (Exception ex)
             {

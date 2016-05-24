@@ -76,13 +76,6 @@ namespace Pomelo.NetCore.Node.Common
                     fileDiff.Filename = match.Groups["newname"].Value;
                 }
 
-                if (fileDiff.OriginalFilename == "/dev/null")
-                    fileDiff.Type = FileDiff.FileDiffType.Addition;
-                else if (fileDiff.Filename == "/dev/null")
-                    fileDiff.Type = FileDiff.FileDiffType.Deletion;
-                else
-                    fileDiff.Type = FileDiff.FileDiffType.Modification;
-
                 // Find first line starts with @@
                 int ln = 0;
                 for (int i = 1; i < diffsGroup.Count; ++i)
@@ -93,6 +86,13 @@ namespace Pomelo.NetCore.Node.Common
                         break;
                     }
                 }
+
+                if (diffsGroup[ln - 2] == "--- /dev/null")
+                    fileDiff.Type = FileDiff.FileDiffType.Addition;
+                else if (diffsGroup[ln - 1] == "+++ /dev/null")
+                    fileDiff.Type = FileDiff.FileDiffType.Deletion;
+                else
+                    fileDiff.Type = FileDiff.FileDiffType.Modification;
 
                 int oriStart = 0, newStart = 0;
                 for (; ln < diffsGroup.Count; ++ln)
