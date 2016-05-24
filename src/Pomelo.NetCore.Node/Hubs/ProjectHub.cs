@@ -513,7 +513,10 @@ namespace Pomelo.NetCore.Node.Hubs
             var process = ProcessPool.SingleOrDefault(x => x.Id == pid);
             if (process == null)
                 return new { isSucceeded = true, msg = "Process not found" };
-            process.Kill();
+            Console.WriteLine("Killing process: " + process.Id);
+            process.StandardInput.WriteLine(3);
+            process.StandardInput.WriteLine(3);
+            process.KillTree();
             return new { isSucceeded = true };
         }
     }
