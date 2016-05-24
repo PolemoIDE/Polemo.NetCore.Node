@@ -23,6 +23,8 @@ namespace Pomelo.NetCore.Node.Common
                 var fileDirectoryName = FileHelper.GetFileDirectoryName(file);
                 var filePath = FileHelper.GetFileRelativeDirectory(projectPath, file);
                 info.Path = filePath;
+                if (info.Path.FirstOrDefault() == '\\' || info.Path.FirstOrDefault() == '/')
+                    info.Path = info.Path.Substring(1);
                 var content = File.ReadAllText(file);
                 var root = JObject.Parse(content);
                 var titleProp = root.Property("title");
