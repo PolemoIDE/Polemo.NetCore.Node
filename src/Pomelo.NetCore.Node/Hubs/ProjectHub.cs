@@ -167,7 +167,7 @@ namespace Pomelo.NetCore.Node.Hubs
                 case "ConsoleApp":
                     url = "https://github.com/PomeloIDE/Pomelo.NetCore.Template/archive/console-app.zip";
                     break;
-                case "WebApplicationEmpty:":
+                case "WebApplicationEmpty":
                     url = "https://github.com/PomeloIDE/Pomelo.NetCore.Template/archive/web-application-empty.zip";
                     break;
                 case "WebApplicationMvc":
