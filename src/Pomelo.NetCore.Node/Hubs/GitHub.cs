@@ -66,19 +66,10 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try
             {
-                var proc = new Process();
-                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
-                proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "--no-pager log -20 --numstat --format=--split--%n%H-::-%an-::-%ae-::-%at-::-%s";
-                proc.StartInfo.RedirectStandardError = true;
-                proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.RedirectStandardInput = true;
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
-                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
-                proc.Start();
-                var output = proc.StandardOutput.ReadToEnd();
-                return new { isSucceeded = true, logs = Parse(output) };
+                var workingDir = Path.Combine(Config.RootPath, projectName);
+                var argument = "--no-pager log -20 --numstat --format=--split--%n%H-::-%an-::-%ae-::-%at-::-%s";
+                var result = ExecuteGit.Execute(workingDir, argument);
+                return new { isSucceeded = true, logs = Parse(result.StdOut) };
             }
             catch (Exception ex)
             {
@@ -99,24 +90,13 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try
             {
-                var proc = new Process();
-                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
-                proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "--no-pager show --pretty=\"\" " + commit;
-                proc.StartInfo.RedirectStandardError = true;
-                proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.RedirectStandardInput = true;
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
-                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
-                proc.Start();
-                var output = proc.StandardOutput.ReadToEnd();
-                var error = proc.StandardError.ReadToEnd();
-                proc.WaitForExit();
-                if (proc.ExitCode != 0)
-                    return new { isSucceeded = false, msg = error };
+                var workingDir = Path.Combine(Config.RootPath, projectName);
+                var argument = "--no-pager show --pretty=\"\" " + commit;
+                var result = ExecuteGit.Execute(workingDir, argument);
+                if (result.ExitCode != 0)
+                    return new { isSucceeded = false, msg = result.StdErr };
 
-                var diff = Diff2html.GetDiff(output);
+                var diff = Diff2html.GetDiff(result.StdOut);
                 var html = Diff2html.DiffToHTML(diff);
                 var list = new List<FileDiff>();
                 foreach (var file in html)
@@ -143,24 +123,14 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try
             {
-                var proc = new Process();
-                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
-                proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "--no-pager diff --no-color --cached";
-                proc.StartInfo.RedirectStandardError = true;
-                proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.RedirectStandardInput = true;
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
-                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
-                proc.Start();
-                proc.WaitForExit();
-                var output = proc.StandardOutput.ReadToEnd();
-                var error = proc.StandardError.ReadToEnd();
-                if (proc.ExitCode != 0)
-                    return new { isSucceeded = false, msg = error };
+                var workingDir = Path.Combine(Config.RootPath, projectName);
+                var argument = "--no-pager diff --no-color --cached";
+                var result = ExecuteGit.Execute(workingDir, argument);
 
-                var diff = Diff2html.GetDiff(output);
+                if (result.ExitCode != 0)
+                    return new { isSucceeded = false, msg = result.StdErr };
+
+                var diff = Diff2html.GetDiff(result.StdOut);
                 var html = Diff2html.DiffToHTML(diff);
                 var list = new List<FileDiff>();
                 foreach (var file in html)
@@ -188,20 +158,11 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try
             {
-                var proc = new Process();
-                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
-                proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "branch -a";
-                proc.StartInfo.RedirectStandardError = true;
-                proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.RedirectStandardInput = true;
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
-                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
-                proc.Start();
-                proc.WaitForExit();
-                var output = proc.StandardOutput.ReadToEnd();
-                output = output.Replace("\r\n", "\n");
+                var workingDir = Path.Combine(Config.RootPath, projectName);
+                var argument = "branch -a";
+                var result = ExecuteGit.Execute(workingDir, argument);
+
+                var output = result.StdOut.Replace("\r\n", "\n");
                 var _branches = output.Split('\n');
                 var branches = new List<string>();
                 var nowBranch = "";
@@ -225,23 +186,12 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try
             {
-                var proc = new Process();
-                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
-                proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "checkout -b" + branchName + baseBranchName;
-                proc.StartInfo.RedirectStandardError = true;
-                proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.RedirectStandardInput = true;
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
-                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
-                proc.Start();
-                proc.WaitForExit();
-                var output = proc.StandardOutput.ReadToEnd();
-                var error = proc.StandardError.ReadToEnd();
-                if (proc.ExitCode != 0)
-                    return new { isSucceeded = false, msg = error };
-                return new { isSucceeded = true, msg = output };
+                var workingDir = Path.Combine(Config.RootPath, projectName);
+                var argument = "checkout -b" + branchName + baseBranchName;
+                var result = ExecuteGit.Execute(workingDir, argument);
+                if (result.ExitCode != 0)
+                    return new { isSucceeded = false, msg = result.StdErr };
+                return new { isSucceeded = true, msg = result.StdOut };
             }
             catch (Exception ex)
             {
@@ -254,23 +204,12 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try
             {
-                var proc = new Process();
-                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
-                proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "checkout " + branchName;
-                proc.StartInfo.RedirectStandardError = true;
-                proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.RedirectStandardInput = true;
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
-                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
-                proc.Start();
-                proc.WaitForExit();
-                var output = proc.StandardOutput.ReadToEnd();
-                var error = proc.StandardError.ReadToEnd();
-                if (proc.ExitCode != 0)
-                    return new { isSucceeded = false, msg = error };
-                return new { isSucceeded = true, msg = output };
+                var workingDir = Path.Combine(Config.RootPath, projectName);
+                var argument = "checkout " + branchName;
+                var result = ExecuteGit.Execute(workingDir, argument);
+                if (result.ExitCode != 0)
+                    return new { isSucceeded = false, msg = result.StdErr };
+                return new { isSucceeded = true, msg = result.StdOut };
             }
             catch (Exception ex)
             {
@@ -283,23 +222,12 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try
             {
-                var proc = new Process();
-                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
-                proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "branch -D " + branchName;
-                proc.StartInfo.RedirectStandardError = true;
-                proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.RedirectStandardInput = true;
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
-                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
-                proc.Start();
-                proc.WaitForExit();
-                var output = proc.StandardOutput.ReadToEnd();
-                var error = proc.StandardError.ReadToEnd();
-                if (proc.ExitCode != 0)
-                    return new { isSucceeded = false, msg = error };
-                return new { isSucceeded = true, msg = output };
+                var workingDir = Path.Combine(Config.RootPath, projectName);
+                var argument = "branch -D " + branchName;
+                var result = ExecuteGit.Execute(workingDir, argument);
+                if (result.ExitCode != 0)
+                    return new { isSucceeded = false, msg = result.StdErr };
+                return new { isSucceeded = true, msg = result.StdOut };
             }
             catch (Exception ex)
             {
@@ -313,23 +241,12 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try
             {
-                var proc = new Process();
-                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
-                proc.StartInfo.FileName = "git";
-                proc.StartInfo.Arguments = "commit -a -m \"" + title + "\" -m \"" + description + "\"";
-                proc.StartInfo.RedirectStandardError = true;
-                proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.RedirectStandardInput = true;
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
-                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
-                proc.Start();
-                proc.WaitForExit();
-                var output = proc.StandardOutput.ReadToEnd();
-                var error = proc.StandardError.ReadToEnd();
-                if (proc.ExitCode != 0)
-                    return new { isSucceeded = false, msg = output + error };
-                return new { isSucceeded = true, msg = output };
+                var workingDir = Path.Combine(Config.RootPath, projectName);
+                var argument = "commit -a -m \"" + title + "\" -m \"" + description + "\"";
+                var result = ExecuteGit.Execute(workingDir, argument);
+                if (result.ExitCode != 0)
+                    return new { isSucceeded = false, msg = result.StdOut + result.StdErr };
+                return new { isSucceeded = true, msg = result.StdOut };
             }
             catch (Exception ex)
             {
@@ -343,24 +260,14 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try
             {
-                var proc = new Process();
-                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
-                proc.StartInfo.FileName = "git";
+                var workingDir = Path.Combine(Config.RootPath, projectName);
                 // proc.StartInfo.Arguments = "push" + " " + repository + " " + refspec ?? "";
-                proc.StartInfo.Arguments = "push" ;
-                proc.StartInfo.RedirectStandardError = true;
-                proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.RedirectStandardInput = true;
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
-                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
-                proc.Start();
-                proc.WaitForExit();
-                var output = proc.StandardOutput.ReadToEnd();
-                var error = proc.StandardError.ReadToEnd();
-                if (proc.ExitCode != 0)
-                    return new { isSucceeded = false, msg = output + error };
-                return new { isSucceeded = true, msg = output };
+                var argument = "push";
+                var result = ExecuteGit.Execute(workingDir, argument);
+                if (result.ExitCode != 0)
+                    return new { isSucceeded = false, msg = result.StdOut + result.StdErr };
+                else
+                    return new { isSucceeded = true, msg = result.StdOut };
             }
             catch (Exception ex)
             {
@@ -373,24 +280,14 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try
             {
-                var proc = new Process();
-                proc.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName);
-                proc.StartInfo.FileName = "git";
+                var workingDir = Path.Combine(Config.RootPath, projectName);
                 // proc.StartInfo.Arguments = "pull" + " " + repository + " " + refspec;
-                proc.StartInfo.Arguments = "pull";
-                proc.StartInfo.RedirectStandardError = true;
-                proc.StartInfo.RedirectStandardOutput = true;
-                proc.StartInfo.RedirectStandardInput = true;
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.StandardErrorEncoding = System.Text.Encoding.UTF8;
-                proc.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
-                proc.Start();
-                proc.WaitForExit();
-                var output = proc.StandardOutput.ReadToEnd();
-                var error = proc.StandardError.ReadToEnd();
-                if (proc.ExitCode != 0)
-                    return new { isSucceeded = false, msg = output + error };
-                return new { isSucceeded = true, msg = output };
+                var argument = "pull";
+                var result = ExecuteGit.Execute(workingDir, argument);
+                if (result.ExitCode != 0)
+                    return new { isSucceeded = false, msg = result.StdOut + result.StdErr };
+                else
+                    return new { isSucceeded = true, msg = result.StdOut };
             }
             catch (Exception ex)
             {
