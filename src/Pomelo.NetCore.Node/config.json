@@ -1,6 +1,6 @@
 ﻿{
-  "RootPath": "/home/ubuntu/ide",
+  "RootPath": "D:\\Deleteme",
   "SecretKey": "secretKey",
-  "OmniSharpPath": "C:\\Users\\1\\Documents\\OmniSharp",
+  "OmniSharpPath": "D:\\Projects\\Pomelo.NetCore.Node\\src\\OminiSharp",
   "OmniSharpExe": "OmniSharp.exe"
 }

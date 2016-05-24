@@ -91,16 +91,16 @@ namespace Pomelo.NetCore.Node.Hubs
             try
             {
                 var workingDir = Path.Combine(Config.RootPath, projectName);
-                var argument = "--no-pager add";
+                var argument = "--no-pager add " + workingDir;
                 var result = ExecuteGit.Execute(argument, workingDir);
                 if (result.ExitCode != 0)
                     return new { isSucceeded = false, msg = result.StdErr };
                     
                 
-                var workingDir = Path.Combine(Config.RootPath, projectName);
-                var argument = "--no-pager show --pretty=\"\" " + commit;
-                var result = ExecuteGit.Execute(workingDir, argument);
-                if (result.ExitCode != 0)
+                var workingDir2 = Path.Combine(Config.RootPath, projectName);
+                var argument2 = "--no-pager show --pretty=\"\" " + commit;
+                var result2 = ExecuteGit.Execute(workingDir, argument2);
+                if (result2.ExitCode != 0)
                     return new { isSucceeded = false, msg = result.StdErr };
 
                 var diff = Diff2html.GetDiff(result.StdOut);
@@ -131,16 +131,16 @@ namespace Pomelo.NetCore.Node.Hubs
             try
             {
                 var workingDir = Path.Combine(Config.RootPath, projectName);
-                var argument = "--no-pager add";
+                var argument = "--no-pager add " + workingDir;
                 var result = ExecuteGit.Execute(argument, workingDir);
                 if (result.ExitCode != 0)
                     return new { isSucceeded = false, msg = result.StdErr };
                 
-                var workingDir = Path.Combine(Config.RootPath, projectName);
-                var argument = "--no-pager diff --no-color --cached";
-                var result = ExecuteGit.Execute(workingDir, argument);
+                var workingDir2 = Path.Combine(Config.RootPath, projectName);
+                var argument2 = "--no-pager diff --no-color --cached";
+                var result2 = ExecuteGit.Execute(workingDir, argument2);
 
-                if (result.ExitCode != 0)
+                if (result2.ExitCode != 0)
                     return new { isSucceeded = false, msg = result.StdErr };
 
                 var diff = Diff2html.GetDiff(result.StdOut);
@@ -260,10 +260,10 @@ namespace Pomelo.NetCore.Node.Hubs
                 if (result.ExitCode != 0)
                     return new { isSucceeded = false, msg = result.StdErr };
                     
-                var workingDir = Path.Combine(Config.RootPath, projectName);
-                var argument = "commit -a -m \"" + title + "\" -m \"" + description + "\"";
-                var result = ExecuteGit.Execute(workingDir, argument);
-                if (result.ExitCode != 0)
+                var workingDir2 = Path.Combine(Config.RootPath, projectName);
+                var argument2 = "commit -a -m \"" + title + "\" -m \"" + description + "\"";
+                var result2 = ExecuteGit.Execute(workingDir, argument2);
+                if (result2.ExitCode != 0)
                     return new { isSucceeded = false, msg = result.StdOut + result.StdErr };
                 return new { isSucceeded = true, msg = result.StdOut };
             }
