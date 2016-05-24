@@ -91,6 +91,13 @@ namespace Pomelo.NetCore.Node.Hubs
             try
             {
                 var workingDir = Path.Combine(Config.RootPath, projectName);
+                var argument = "--no-pager add";
+                var result = ExecuteGit.Execute(argument, workingDir);
+                if (result.ExitCode != 0)
+                    return new { isSucceeded = false, msg = result.StdErr };
+                    
+                
+                var workingDir = Path.Combine(Config.RootPath, projectName);
                 var argument = "--no-pager show --pretty=\"\" " + commit;
                 var result = ExecuteGit.Execute(workingDir, argument);
                 if (result.ExitCode != 0)
@@ -123,6 +130,12 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try
             {
+                var workingDir = Path.Combine(Config.RootPath, projectName);
+                var argument = "--no-pager add";
+                var result = ExecuteGit.Execute(argument, workingDir);
+                if (result.ExitCode != 0)
+                    return new { isSucceeded = false, msg = result.StdErr };
+                
                 var workingDir = Path.Combine(Config.RootPath, projectName);
                 var argument = "--no-pager diff --no-color --cached";
                 var result = ExecuteGit.Execute(workingDir, argument);
@@ -241,6 +254,12 @@ namespace Pomelo.NetCore.Node.Hubs
         {
             try
             {
+                var workingDir = Path.Combine(Config.RootPath, projectName);
+                var argument = "--no-pager add";
+                var result = ExecuteGit.Execute(argument, workingDir);
+                if (result.ExitCode != 0)
+                    return new { isSucceeded = false, msg = result.StdErr };
+                    
                 var workingDir = Path.Combine(Config.RootPath, projectName);
                 var argument = "commit -a -m \"" + title + "\" -m \"" + description + "\"";
                 var result = ExecuteGit.Execute(workingDir, argument);
