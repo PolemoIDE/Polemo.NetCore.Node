@@ -93,23 +93,8 @@ namespace Pomelo.NetCore.Node.Hubs
         public object RunCommand(string projectName, string args, string projectPath)
         {
             var proc = new Process();
-            var restore = new Process();
             try
             {
-                restore.StartInfo.UseShellExecute = false;
-                restore.StartInfo.RedirectStandardError = true;
-                restore.StartInfo.RedirectStandardOutput = true;
-                restore.StartInfo.RedirectStandardInput = true;
-                restore.StartInfo.CreateNoWindow = true;
-                restore.StartInfo.WorkingDirectory = Path.Combine(Config.RootPath, projectName, projectPath);
-                restore.StartInfo.FileName = "dotnet";
-                restore.StartInfo.Arguments = "restore";
-                restore.OutputDataReceived += Proc_OutputDataReceived;
-                restore.ErrorDataReceived += Proc_ErrorDataReceived;
-                restore.Start();
-                restore.BeginErrorReadLine();
-                restore.BeginOutputReadLine();
-                restore.WaitForExit();
                 proc.StartInfo.UseShellExecute = false;
                 proc.StartInfo.RedirectStandardError = true;
                 proc.StartInfo.RedirectStandardOutput = true;
